@@ -6,9 +6,13 @@
 
 var $ = document.getElementById.bind(document);
 
-$('name').textContent = chrome.i18n.getMessage('name');
+if($('name')) {
+  $('name').textContent = chrome.i18n.getMessage('name');
+}
 // $('link').href = url;
-$('remove').onclick = function() {
-  // chrome.management.uninstallSelf({showConfirmDialog: true});
-  window.close();
-};
+if($('remove')) {
+  $('remove').onclick = function() {
+    // chrome.management.uninstallSelf({showConfirmDialog: true});
+    window.close();
+  };
+}

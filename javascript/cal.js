@@ -1,3 +1,4 @@
+
 $(function() {
 
   console.debug('Google Calendar Loaded');
@@ -11,6 +12,25 @@ $(function() {
   });
 
 });
+
+
+
+// function api() {
+//   var req = new XMLHttpRequest();
+//     req.open(
+//             "GET",
+//             "http://api.rememberthemilk.com/services/rest/?" +
+//             "name=Test%20task", 
+//             true);
+//     req.onload = onResponseReceived;
+//     req.send(null);
+
+//     function onResponseReceived(data, response) {
+//       console.debug(data);
+//       console.debug(response);
+//         // console.log("It worked.");
+//     }
+// }
 
 
 function autoComplete(title, data) {

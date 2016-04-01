@@ -5,6 +5,16 @@
  * LICENSE file.
 -->
 <html>
+<head>
+<title>OAuth 2.0 Options</title>
+  <script src="../javascript/oauth2/oauth2.js"></script>
+  <script src="../javascript/options.js"></script>
+  <script src="../javascript/auth.js"></script>
+  <style>
+    h1 { font-size: 20px }
+    button.authorized { background: green }
+  </style>
+</head>
 <body>
 
 <p>
@@ -17,6 +27,15 @@ We recommend the <a id="link">Google Calendar</a> Extension.
 </p>
 
 <p>
+
+<div class="flow">
+  <button id="google">
+    Grant Google Access
+  </button>
+  <button id="clear">Clear Tokens</button>
+</div>
+
+
 <button id="remove">Ok, cool</button>
 </p>
 
