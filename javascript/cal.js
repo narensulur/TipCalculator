@@ -2,10 +2,8 @@ $(function() {
 
   console.debug('Google Calendar Loaded');
 
-  var nfl = ['+Cool Cars'];
-  var data = $.map(nfl, function (team) { return { value: team, data: { category: 'Customers' }}; });
-  // var nba = $.map(nbaTeams, function (team) { return { value: team, data: { category: 'NBA' } }; });
-  // var teams = nhl.concat(nba);
+  var customers = ['Cool Cars'];
+  var data = $.map(customers, function (customer) { return { value: customer, data: { category: 'Customers' }}; });
   
   $(document).mouseup(function() {
     var title = '.cb-event-title-input';
@@ -16,35 +14,41 @@ $(function() {
 
 
 function autoComplete(title, data) {
-  $(title).autocomplete({
+
+  var stringToReplace = "";
+  var $field = $(title);
+
+  $field.autocomplete({
         lookup: data,
         minChars: 1,
-        delimiter: ' ',
+        preserveInput: true,
+        // delimiter: '+',
         lookupFilter: function(suggestion, originalQuery, queryLowerCase) {
-            var re = new RegExp('\\b' + $.Autocomplete.utils.escapeRegExChars(queryLowerCase), 'gi');
-            if(!queryLowerCase.startsWith('+')) {
-              return false;
+          var phraseRegEx = new RegExp('\\+(.*)\\s?', 'gi');
+            var phrase = phraseRegEx.exec(queryLowerCase);
+            if(phrase) {
+              stringToReplace = phrase[0].replace('+', '');
+              var re = new RegExp('\\b' + $.Autocomplete.utils.escapeRegExChars(stringToReplace), 'gi');
+              return re.test(suggestion.value);
             } else {
-              return true;
+              return false;
             }
-            // return re.test(suggestion.value);
         },
-        formatResult: function(suggestion, currentValue) {
-          return "Cool Cars";
-        },
-        // onSelect: function (suggestion) {
-        //   console.debug(suggestion.value);
-        //     $('#selection').html('You selected: ' + suggestion.value + ', ' + suggestion.data.category);
+        // formatResult: function(suggestion, currentValue) {
+        //   return "San Francisco 49ers";
         // },
+        onSelect: function (suggestion) {
+
+            var replaceWith = "+" + suggestion.value;
+
+            var stringToReplaceRegex = new RegExp($.Autocomplete.utils.escapeRegExChars("+" + stringToReplace), 'i');
+
+            var newValue = $field.val().replace(stringToReplaceRegex, replaceWith);
+            $field.val(newValue + " ");
+
+        },
         showNoSuggestionNotice: false,
         noSuggestionNotice: 'Sorry, no matching results',
         groupBy: 'category'
     });
-}
-
-if (!String.prototype.startsWith) {
-    String.prototype.startsWith = function(searchString, position){
-      position = position || 0;
-      return this.substr(position, searchString.length) === searchString;
-  };
 }
