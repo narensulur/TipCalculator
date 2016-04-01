@@ -11,7 +11,7 @@
   // },
   "version": "1.0.0",
   "background": {
-    "scripts": ["javascript/background.js"],
+    "scripts": ["javascript/oauth2/oauth2.js", "javascript/auth.js", "javascript/background.js"],
     "persistent": false
   },
   "content_scripts": [
@@ -24,6 +24,7 @@
       "matches": ["https://*.google.com/*"],
       "css": ["styles/style.css"],
       "js": [
+        "javascript/auth.js", 
         "javascript/jquery.min.js", 
         "javascript/jquery.autocomplete.min.js", 
         "javascript/cal.js"

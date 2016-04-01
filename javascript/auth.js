@@ -1,7 +1,16 @@
-function api(provider) {
+var google = {};
 
+if(typeof(OAuth2) !== "undefined") {
+  google = new OAuth2('google', {
+    client_id: '976988315458-513pacglki5rsounlfsrmugsbr6cvdd6.apps.googleusercontent.com',
+    client_secret: 'SHNp6y2D_dFYXcKu9L4ubWeE',
+    api_scope: 'https://www.google.com/m8/feeds/'
+    // api_scope: 'https://www.googleapis.com/auth/contacts'
+  });
+}
+
+function api(callback) {
   google.authorize(function() {
-    console.debug(google.getAccessToken());
     var req = new XMLHttpRequest();
       req.open(
               "GET",
@@ -13,7 +22,10 @@ function api(provider) {
         if (req.readyState == 4) {
           if (req.status == 200) {
             // Callback with the data (incl. tokens).
-            console.debug(req.responseText);
+            // console.debug(req.responseText);
+            if(callback) {
+              callback(req.responseText);
+            }
             // onResponseReceived(that.adapter.parseAccessToken(req.responseText));
           }
         }
@@ -25,17 +37,8 @@ function api(provider) {
         console.debug(data);
         console.debug(response);
       }
-
     });
-
 }
-
-  var google = new OAuth2('google', {
-    client_id: '976988315458-513pacglki5rsounlfsrmugsbr6cvdd6.apps.googleusercontent.com',
-    client_secret: 'SHNp6y2D_dFYXcKu9L4ubWeE',
-    // api_scope: 'https://www.google.com/m8/feeds/'
-    api_scope: 'https://www.googleapis.com/auth/contacts'
-  });
 
   function authorize(providerName) {
     var provider = window[providerName];
@@ -58,7 +61,7 @@ function api(provider) {
       var button = document.querySelector('#' + providerName);
       if (provider.hasAccessToken()) {
         console.debug('has Google access');
-        api(provider);
+        api();
         button.classList.add('authorized');
       } else {
         button.classList.remove('authorized');
@@ -67,6 +70,7 @@ function api(provider) {
   }
 
 document.addEventListener('DOMContentLoaded', function () {
+
   document.querySelector('button#google').addEventListener('click', function() { authorize('google'); });
   document.querySelector('button#clear').addEventListener('click', function() { clearAuthorized() });
 
