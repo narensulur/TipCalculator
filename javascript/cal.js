@@ -1,10 +1,12 @@
+var customers = [];
+var data = [];
 
 $(function() {
 
   console.debug('Google Calendar Loaded');
 
-  var customers = ['Cool Cars'];
-  var data = $.map(customers, function (customer) { return { value: customer, data: { category: 'Customers' }}; });
+  // customers = ['Cool Cars'];
+  data = $.map(customers, function (customer) { return { value: customer, data: { category: 'Customers' }}; });
   
   $(document).mouseup(function() {
     var title = '.cb-event-title-input';
@@ -18,7 +20,14 @@ chrome.runtime.onMessage.addListener(
     // if( request.message === "mom" ) {
     //   console.debug(sendResponse);
     // }
-    console.debug(request.message);
+    var json = JSON.parse(request.message);
+    // console.debug(json.connections);
+    for (var i = 0; i < json.connections.length; i++) {
+      var person = json.connections[i];
+      customers.push(person.names[0].displayName);
+    }
+    data = $.map(customers, function (customer) { return { value: customer, data: { category: 'Customers' }}; });
+    // console.debug(customers);
   }
 );
   
