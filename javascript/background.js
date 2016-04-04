@@ -10,17 +10,21 @@ if (!self.port && !window.chrome && !window.safari) {
     throw new Error('Shouldn\'t be here');
 }
 
+var getJSON = false;
+
 chrome.tabs.executeScript({
   file: 'javascript/cal.js'
 });
 
 chrome.tabs.onUpdated.addListener(function(tabId, info, tab) {
-  if (tab.url !== undefined && info.status == "complete") {
+  if (tab.url !== undefined && info.status == "complete" && getJSON === false && tab.url.indexOf("https://calendar.google.com/calendar/render") > -1) {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
       var activeTab = tabs[0];
+      getJSON = true;
+      console.debug(tab.url);
       api(function(response) {
         chrome.tabs.sendMessage(activeTab.id, {"message": response});
-      })
+      });
     });
   }
 });

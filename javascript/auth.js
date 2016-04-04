@@ -1,5 +1,7 @@
 var google = {};
 
+var apiKey = "AIzaSyC0nhbN3R-7-ppZRZoq_Wvcmr7dn2HA1no";
+
 if(typeof(OAuth2) !== "undefined") {
   google = new OAuth2('google', {
     client_id: '976988315458-513pacglki5rsounlfsrmugsbr6cvdd6.apps.googleusercontent.com',
@@ -14,7 +16,7 @@ function api(callback) {
     var req = new XMLHttpRequest();
       req.open(
               "GET",
-              "https://people.googleapis.com/v1/people/me/connections", true);
+              "https://people.googleapis.com/v1/people/me/connections?key=" + apiKey, true);
       req.setRequestHeader('Authorization', 'Bearer ' + google.getAccessToken());
       // req.setRequestHeader("Referer", "http://www.google.com/robots.txt");
       // req.onload = onResponseReceived;
