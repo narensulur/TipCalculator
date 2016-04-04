@@ -1,33 +1,32 @@
 var customers = [];
 var data = [];
+var isActive = 0;
 
 $(function() {
 
   console.debug('Google Calendar Loaded');
 
-  // customers = ['Cool Cars'];
   data = $.map(customers, function (customer) { return { value: customer, data: { category: 'Customers' }}; });
   
-  $(document).mouseup(function() {
-    var title = '.cb-event-title-input';
-    autoComplete(title, data);
+  $(document).keydown(function() {
+    isActive = $('.cb-event-title-input').attr('active');
+    $('.cb-event-title-input').attr('active', 'true');
+    if(!isActive) {
+      var title = '.cb-event-title-input';
+      autoComplete(title, data);
+    }
   });
 
 });
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
-    // if( request.message === "mom" ) {
-    //   console.debug(sendResponse);
-    // }
     var json = JSON.parse(request.message);
-    // console.debug(json.connections);
     for (var i = 0; i < json.connections.length; i++) {
       var person = json.connections[i];
       customers.push(person.names[0].displayName);
     }
     data = $.map(customers, function (customer) { return { value: customer, data: { category: 'Customers' }}; });
-    // console.debug(customers);
   }
 );
   
@@ -41,6 +40,7 @@ function autoComplete(title, data) {
   $field.autocomplete({
         lookup: data,
         minChars: 1,
+        appendTo: $('.textbox-fill-wrapper'),
         preserveInput: true,
         // delimiter: '+',
         lookupFilter: function(suggestion, originalQuery, queryLowerCase) {
@@ -64,7 +64,7 @@ function autoComplete(title, data) {
             var stringToReplaceRegex = new RegExp($.Autocomplete.utils.escapeRegExChars("+" + stringToReplace), 'i');
 
             var newValue = $field.val().replace(stringToReplaceRegex, replaceWith);
-            $field.val(newValue + " ");
+            $field.val(newValue + " ").focus();
 
         },
         showNoSuggestionNotice: false,
