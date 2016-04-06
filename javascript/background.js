@@ -24,6 +24,8 @@ chrome.tabs.onUpdated.addListener(function(tabId, info, tab) {
       console.debug(tab.url);
       api(function(response) {
         chrome.tabs.sendMessage(activeTab.id, {"message": response});
+      }, function() { // fail, retry
+        getJSON = false;
       });
     });
   }

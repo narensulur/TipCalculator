@@ -42,14 +42,19 @@
   "web_accessible_resources" : [
     "javascript/oauth2/oauth2.html"
   ],
-  "browser_action": {
-    "default_icon": {
-      "19": "images/icon-19.png",
-      "38": "images/icon-38.png"
-    },
-    "default_title": "QBO Calendar",
-    "default_popup": "views/popup.html"
-  },
+  "icons": {
+      "128": "images/icon-128.png",
+      "16": "images/icon-16.png",
+      "48": "images/icon-48.png"
+   },
+  // "browser_action": {
+  //   "default_icon": {
+  //     "19": "images/icon-19.png",
+  //     "38": "images/icon-38.png"
+  //   },
+  //   "default_title": "QBO Calendar",
+  //   "default_popup": "views/popup.html"
+  // },
   "icons": {
     "128": "images/icon-128.png",
     "48": "images/icon-48.png",

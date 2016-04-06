@@ -11,7 +11,7 @@ if(typeof(OAuth2) !== "undefined") {
   });
 }
 
-function api(callback) {
+function api(callback, errorCallback) {
   google.authorize(function() {
     var req = new XMLHttpRequest();
       req.open(
@@ -21,6 +21,7 @@ function api(callback) {
       // req.setRequestHeader("Referer", "http://www.google.com/robots.txt");
       // req.onload = onResponseReceived;
       req.addEventListener('readystatechange', function(event) {
+        console.debug(req.status);
         if (req.readyState == 4) {
           if (req.status == 200) {
             // Callback with the data (incl. tokens).
@@ -29,16 +30,14 @@ function api(callback) {
               callback(req.responseText);
             }
             // onResponseReceived(that.adapter.parseAccessToken(req.responseText));
+          } else {
+            if(errorCallback) {
+              errorCallback();
+            }
           }
         }
       });
       req.send();
-
-      function onResponseReceived(data, response) {
-        console.debug("It worked.");
-        console.debug(data);
-        console.debug(response);
-      }
     });
 }
 
