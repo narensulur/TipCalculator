@@ -6,6 +6,10 @@ $(function() {
 
   console.debug('Google Calendar Loaded');
 
+  chrome.extension.sendMessage({
+    method: 'contacts.get'
+  });
+
   data = $.map(customers, function (customer) { return { value: customer, data: { category: 'Customers' }}; });
   
   $(document).keydown(function() {
