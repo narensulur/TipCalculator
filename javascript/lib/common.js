@@ -1,4 +1,4 @@
-function OAuthForDevices(tokenResponses) {
+function OAuthForDevices(tokenResponse) {
   
   var GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/auth";
   var GOOGLE_TOKEN_URL = "https://accounts.google.com/o/oauth2/token";
@@ -14,9 +14,9 @@ function OAuthForDevices(tokenResponses) {
   // Need this because 'this' keyword will be out of scope within this.blah methods like callbacks etc.
   var that = this;
   
-  this.tokenResponses = tokenResponses;
-  if (!this.tokenResponses) {
-    this.tokenResponses = new Array();
+  this.tokenResponse = null;
+  if (tokenResponse) {
+    this.tokenResponse = tokenResponse;
   }
   this.params = null;
   this.callback = null;
@@ -25,28 +25,34 @@ function OAuthForDevices(tokenResponses) {
     return STATE;
   }
 
-  // return array
-  this.getUserEmails = function() {
-    var userEmails = new Array();
-    $.each(that.tokenResponses, function(index, tokenResponse) {
-      userEmails.push(tokenResponse.userEmail);
-    });
-    return userEmails;
+  this.getContacts = function() {
+    // var token = onTokenChangeWrapper(this.tokenResponse);
+    if(this.tokenResponse != null) {
+      onTokenChangeWrapper({tokenResponse: this.tokenResponse});
+      ensureToken(this.tokenResponse, this.contactsApi);
+    }
   }
 
-  // return just the emailid
-  this.getContacts = function(tokenResponse, callback) {
-    // were using the contacts url because it's the only one we request permission to and it will give us the email id (so only fetch 1 result)
-    // send token response since we don't have the userEmail
-    sendOAuthRequest({tokenResponse:tokenResponse, url: "/"}, function(params) {     
+  this.contactsApi = function() {
+    if(!that.tokenResponse) {
+      return;
+    }
+    sendOAuthRequest({tokenResponse: that.tokenResponse, url: "/"}, function(params) {     
       if (params.error) {
-        console.error("failed: you might by re-trying to fetch the userEmail for the non default account")
-        // params.warning = "failed: you might by re-trying to fetch the userEmail for the non default account";
-        // callback(params);
+        console.error("failed, need token refresh");
       } else {
-        console.debug(params);
-        // var userEmail = params.data.id;
-        // params.userEmail = userEmail;
+        $xml = $(params.data);
+        var feed = $xml[0].childNodes[0];
+        var entries = $(feed).find( "entry" );
+        console.debug(entries);
+        console.debug(entries.length);
+        var customers = [];
+        for (var i = 0; i < entries.length; i++) {
+          var entry = entries[i];
+          var title = $(entry).find("title")[0].textContent;
+          customers.push(title);
+        }
+        window.localStorage['contacts'] = JSON.stringify(customers);
         // callback(params);
       }
     });
@@ -55,7 +61,7 @@ function OAuthForDevices(tokenResponses) {
   function onTokenChangeWrapper(params) {
     // expires_in params is in seconds (i think)
     params.tokenResponse.expiryDate = new Date(Date.now() + (params.tokenResponse.expires_in * 1000));
-    that.onTokenChange(params, that.tokenResponses);
+    that.onTokenChange(params, that.tokenResponse);
   } 
 
   function onTokenErrorWrapper(tokenResponse, response) {
@@ -63,7 +69,7 @@ function OAuthForDevices(tokenResponses) {
     if ((response.oauthAction == "refreshToken" && response.jqXHR.status == 400) || response.jqXHR.status == 401) {
       console.error("user probably revoked access so removing token:", response);
       that.removeTokenResponse(tokenResponse);      
-      that.onTokenError(tokenResponse, response);
+      // that.onTokenError(tokenResponse, response);
     }
   } 
 
@@ -101,23 +107,6 @@ function OAuthForDevices(tokenResponses) {
   this.setOnTokenError = function(onTokenError) {
     this.onTokenError = onTokenError;
   }
-
-  this.generateURL = function(userEmail, url, callback) {
-    var tokenResponse = that.findTokenResponse({userEmail:userEmail});
-    if (tokenResponse) {
-      ensureToken(tokenResponse, function(response) {
-        if (response.error) {
-          console.error("error generating url", response);          
-        } else {
-          // before when calling refreshtoken we used to call this method, notice the tokenResponse came from the response and not that one passed in... params.generatedURL = setUrlParam(url, "access_token", params.tokenResponse.access_token);
-          response.generatedURL = setUrlParam(url, "access_token", tokenResponse.access_token);
-        }
-        callback(response);
-      });
-    } else {
-      callback({error:"No tokenResponse found!"});
-    }
-  }
   
   function sendOAuthRequest(params, callback) {
     // must append the access token to every request
@@ -129,9 +118,6 @@ function OAuthForDevices(tokenResponses) {
     var accessToken;
     if (params.tokenResponse) {
       accessToken = params.tokenResponse.access_token;
-    } else if (params.userEmail) {
-      var tokenResponse = that.findTokenResponse(params);
-      accessToken = tokenResponse.access_token;
     }
 
     params.url = setUrlParam(params.url, "access_token", accessToken);
@@ -155,16 +141,17 @@ function OAuthForDevices(tokenResponses) {
       type: params.type,
       url: BASE_URI + params.url,
       data: params.data,
+      headers: {"GData-Version": "3.0"},
       contentType: params.contentType,
       processData: params.processData,
-      dataType: "json",
+      dataType: "xml",
       timeout: 45000,
       complete: function(jqXHR, textStatus) {
         var status = getStatus(jqXHR, textStatus);
         if (status == 200 || status == 204) {
           var data;
           if (jqXHR.responseText) {
-            data = JSON.parse(jqXHR.responseText);
+            data = $.parseXML(jqXHR.responseText);
           } else {
             // happens when user does a method like DELETE where this no content returned
             data = {};
@@ -200,16 +187,20 @@ function OAuthForDevices(tokenResponses) {
     if (isExpired(tokenResponse)) {
       console.log("token expired: ", tokenResponse);
       refreshToken(tokenResponse, function(response) {
-        callback(response);
+        if(typeof(callback) != "undefined") {
+          callback(response);
+        }
       });
     } else {
-      callback({});
+      if(typeof(callback) != "undefined") {
+        callback({});
+      }
     }
   }
   
   function refreshToken(tokenResponse, callback) {
     // must refresh token
-    console.log("refresh token: " + tokenResponse.userEmail + " " + now().toString());
+    // console.log("refresh token: " + tokenResponse.userEmail + " " + now().toString());
     $.ajax({
       type: "POST",
       url: GOOGLE_TOKEN_URL,      
@@ -225,7 +216,9 @@ function OAuthForDevices(tokenResponses) {
           
           var callbackParams = {tokenResponse:tokenResponse};
           onTokenChangeWrapper(callbackParams);
-          console.log("in refresh: " + tokenResponse.expiryDate.toString());
+          console.debug(tokenResponse);
+          that.saveToken(tokenResponse);
+          console.log("expires at: " + tokenResponse.expiryDate.toString());
           callback(callbackParams);
         } else {
           var callbackParams = {tokenResponse:tokenResponse};
@@ -257,24 +250,11 @@ function OAuthForDevices(tokenResponses) {
   
   // private isExpired
   function isExpired(tokenResponse) {
+    console.debug(tokenResponse);
     var SECONDS_BUFFER = -300; // 5 min. yes negative, let's make the expiry date shorter to be safe
     return !tokenResponse.expiryDate || new Date().isAfter(tokenResponse.expiryDate.addSeconds(SECONDS_BUFFER, true));
   }
 
-  // public method, should be called before sending multiple asynchonous requests to .send
-  this.ensureTokenForEmail = function(userEmail, callback) {
-    var tokenResponse = that.findTokenResponse({userEmail:userEmail});
-    if (tokenResponse) {
-      ensureToken(tokenResponse, function(response) {
-        callback(response);
-      });
-    } else {
-      var error = "no token for: " + userEmail + ": might have not have been granted access";
-      console.error(error);
-      callback({error:error});
-    }
-  }   
-  
   this.send = function(params, callback) {
     var dfd = new $.Deferred();
     // save all args in this sendrequet to call it back later
@@ -313,30 +293,26 @@ function OAuthForDevices(tokenResponses) {
     return dfd.promise();
   }
   
-  this.findTokenResponse = function(params) {
-    for (var a=0; a<that.tokenResponses.length; a++) {
-      if (that.tokenResponses[a].userEmail == params.userEmail) {
-        return that.tokenResponses[a];
-      }
-    }
-  }
-  
-  // removes token response and calls onTokenChange to propogate change back to client
-  this.removeTokenResponse = function(params) {
-    console.log("parms", params)
-    for (var a=0; a<that.tokenResponses.length; a++) {
-      if (that.tokenResponses[a].userEmail == params.userEmail) {
-        that.tokenResponses.splice(a, 1);
-        break;
-      }
-    }
-    that.onTokenChange(null, that.tokenResponses);
-  }
+  this.saveToken = function(tokenResponse) {
+    that.tokenResponse = tokenResponse;
+    window.localStorage['token'] = JSON.stringify(tokenResponse);
+  };
 
-  this.removeAllTokenResponses = function() {
-    that.tokenResponses = [];
-    that.onTokenChange(null, that.tokenResponses);
-  }
+  this.loadToken = function() {
+    var token = window.localStorage['token'];
+    if(token) {
+      that.tokenResponse = JSON.parse(token);
+    }
+    return that.tokenResponse;
+  };
+  
+  this.clearToken = function() {
+    console.debug('CLEARED');
+    window.localStorage.removeItem('contacts');
+    window.localStorage.removeItem('token');
+    that.tokenResponse = null;
+    that.onTokenChange(null, that.tokenResponse);
+  };
 
   this.getAccessToken = function(code, callback) {
     if (!code) {
@@ -359,29 +335,12 @@ function OAuthForDevices(tokenResponses) {
             callback({error:tokenResponse.error.message});
           } else {
 
-            // google.getContacts(tokenResponse.access_token);
-            that.getContacts(tokenResponse);
+            that.saveToken(tokenResponse);
+            
+            that.contactsApi();
 
-            // that.getUserEmail(tokenResponse, function(params) {
-            //   if (params.userEmail && !params.error) {
-            //     // add this to response
-            //     tokenResponse.userEmail = params.userEmail;
-                
-            //     var tokenResponseFromMemory = that.findTokenResponse(params);
-            //     if (tokenResponseFromMemory) {
-            //       // update if exists
-            //       tokenResponseFromMemory = tokenResponse;
-            //     } else {
-            //       // add new token response
-            //       that.tokenResponses.push(tokenResponse);
-            //     }
-            //     var callbackParams = {tokenResponse:tokenResponse};
-            //     onTokenChangeWrapper(callbackParams);
-            //     callback(callbackParams);
-            //   } else {
-            //     callback(params);
-            //   }
-            // });
+            var callbackParams = {tokenResponse:tokenResponse};
+            onTokenChangeWrapper(callbackParams);
           }
         } else {
           callback({error:textStatus});
