@@ -20,7 +20,7 @@ google.requestAuth = function() {
   });
 };
 
-google.getContacts = function(token, callback, err) {
+google.getContacts = function() {
   console.debug('get contacts');
   oAuthForDevices.getContacts();
 };

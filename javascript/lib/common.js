@@ -37,6 +37,7 @@ function OAuthForDevices(tokenResponse) {
     if(!that.tokenResponse) {
       return;
     }
+    chrome.extension.sendMessage({method: 'authtoken.success'});
     sendOAuthRequest({tokenResponse: that.tokenResponse, url: "/"}, function(params) {     
       if (params.error) {
         console.error("failed, need token refresh");
@@ -156,6 +157,7 @@ function OAuthForDevices(tokenResponse) {
             // happens when user does a method like DELETE where this no content returned
             data = {};
           }
+          // chrome.extension.sendMessage({method: 'authtoken.success'});
           callback({data:data});
         } else {
           console.error("error getting data", jqXHR);
@@ -241,7 +243,7 @@ function OAuthForDevices(tokenResponse) {
           
           callbackParams.jqXHR = jqXHR;
           callbackParams.oauthAction = "refreshToken";
-          logError(callbackParams.error);
+          // logError(callbackParams.error);
           callback(callbackParams);
         }
       }
@@ -250,7 +252,6 @@ function OAuthForDevices(tokenResponse) {
   
   // private isExpired
   function isExpired(tokenResponse) {
-    console.debug(tokenResponse);
     var SECONDS_BUFFER = -300; // 5 min. yes negative, let's make the expiry date shorter to be safe
     return !tokenResponse.expiryDate || new Date().isAfter(tokenResponse.expiryDate.addSeconds(SECONDS_BUFFER, true));
   }

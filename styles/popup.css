@@ -81,16 +81,6 @@ header {
   margin: 0 2px;
 }
 
-#announcement_new_features {
-  background: #fff;
-  color: #333;
-  display: none;
-  padding: 8px;
-  text-decoration: none;
-  width: 100%;
-  margin-bottom: 8px;
-}
-
 #info_bar {
   background: #ffdbdd;
   color: #000;
@@ -112,6 +102,10 @@ section p {
 
 #authorization_required {
   cursor: pointer;
+}
+
+.button.hidden {
+  display: none;
 }
 
 .button {
