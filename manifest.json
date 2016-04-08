@@ -25,7 +25,6 @@
       "matches": ["https://calendar.google.com/*"],
       "css": ["styles/style.css"],
       "js": [
-        "javascript/auth.js", 
         "javascript/lib/jquery.min.js", 
         "javascript/lib/jquery.autocomplete.min.js", 
         "javascript/cal.js"

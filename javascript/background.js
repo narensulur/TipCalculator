@@ -91,6 +91,10 @@ background.listen = function() {
   });
 };
 
+background.getCustomers = function() {
+  return window.localStorage['contacts'];
+};
+
 background.version = function() {
   window.localStorage['version'] = chrome.app.getDetails().version;
 };
@@ -119,15 +123,16 @@ $(document).ready(function() {
   background.init();
 });
 
-// chrome.tabs.onUpdated.addListener(function(tabId, info, tab) {
-//   if (tab.url !== undefined && info.status == "complete" && tab.url.indexOf("https://calendar.google.com/calendar/render") > -1) {
-//     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-//       var activeTab = tabs[0];
-//       api(function(response) {
-//         chrome.tabs.sendMessage(activeTab.id, {"message": response});
-//       }, function() { // fail, retry
-//         background.retry = true;
-//       });
-//     });
-//   }
-// });
+chrome.tabs.onUpdated.addListener(function(tabId, info, tab) {
+  if (tab.url !== undefined && info.status == "complete" && tab.url.indexOf("https://calendar.google.com/calendar/render") > -1) {
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+      var activeTab = tabs[0];
+      chrome.tabs.sendMessage(activeTab.id, {"message": background.getCustomers() });
+      // api(function(response) {
+      //   chrome.tabs.sendMessage(activeTab.id, {"message": response});
+      // }, function() { // fail, retry
+      //   background.retry = true;
+      // });
+    });
+  }
+});

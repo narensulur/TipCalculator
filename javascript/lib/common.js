@@ -45,8 +45,8 @@ function OAuthForDevices(tokenResponse) {
         $xml = $(params.data);
         var feed = $xml[0].childNodes[0];
         var entries = $(feed).find( "entry" );
-        console.debug(entries);
-        console.debug(entries.length);
+        // console.debug(entries);
+        // console.debug(entries.length);
         var customers = [];
         for (var i = 0; i < entries.length; i++) {
           var entry = entries[i];

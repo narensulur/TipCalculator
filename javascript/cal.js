@@ -6,9 +6,11 @@ $(function() {
 
   console.debug('Google Calendar Loaded');
 
-  chrome.extension.sendMessage({
-    method: 'contacts.get'
-  });
+  // chrome.extension.sendMessage({
+  //   method: 'contacts.get'
+  // });
+
+  customers = window.localStorage['customers'];
 
   data = $.map(customers, function (customer) { return { value: customer, data: { category: 'Customers' }}; });
   
@@ -25,14 +27,17 @@ $(function() {
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
-    var json = JSON.parse(request.message);
-    for (var i = 0; i < json.connections.length; i++) {
-      var person = json.connections[i];
-      if(person.names) {
-        customers.push(person.names[0].displayName);
-      }
-    }
+    var customers = JSON.parse(request.message);
+    // console.debug(customers);
     data = $.map(customers, function (customer) { return { value: customer, data: { category: 'Customers' }}; });
+    // var json = JSON.parse(request.message);
+    // for (var i = 0; i < json.connections.length; i++) {
+    //   var person = json.connections[i];
+    //   if(person.names) {
+    //     customers.push(person.names[0].displayName);
+    //   }
+    // }
+    // data = $.map(customers, function (customer) { return { value: customer, data: { category: 'Customers' }}; });
   }
 );
   
