@@ -61,6 +61,9 @@ function OAuthForDevices(tokenResponse) {
 
   function onTokenChangeWrapper(params) {
     // expires_in params is in seconds (i think)
+    if(params.tokenResponse.expiryDate) {
+      return;
+    }
     params.tokenResponse.expiryDate = new Date(Date.now() + (params.tokenResponse.expires_in * 1000));
     that.onTokenChange(params, that.tokenResponse);
   } 
@@ -253,7 +256,7 @@ function OAuthForDevices(tokenResponse) {
   // private isExpired
   function isExpired(tokenResponse) {
     var SECONDS_BUFFER = -300; // 5 min. yes negative, let's make the expiry date shorter to be safe
-    return !tokenResponse.expiryDate || new Date().isAfter(tokenResponse.expiryDate.addSeconds(SECONDS_BUFFER, true));
+    return !tokenResponse.expiryDate || new Date().isAfter(new Date(tokenResponse.expiryDate).addSeconds(SECONDS_BUFFER, true));
   }
 
   this.send = function(params, callback) {
@@ -335,13 +338,16 @@ function OAuthForDevices(tokenResponse) {
           if (tokenResponse.error) {
             callback({error:tokenResponse.error.message});
           } else {
-
-            that.saveToken(tokenResponse);
             
+            that.tokenResponse = tokenResponse;
+
+            var callbackParams = {tokenResponse: that.tokenResponse};
+            onTokenChangeWrapper(callbackParams);
+
+            that.saveToken(that.tokenResponse);
+
             that.contactsApi();
 
-            var callbackParams = {tokenResponse:tokenResponse};
-            onTokenChangeWrapper(callbackParams);
           }
         } else {
           callback({error:textStatus});

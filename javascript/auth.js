@@ -8,8 +8,7 @@ google.clearToken = function() {
 google.requestAuth = function() {
 
   var token = oAuthForDevices.loadToken();
-  console.debug(token);
-
+  
   if(token !== null) {
     oAuthForDevices.getContacts();
     return;

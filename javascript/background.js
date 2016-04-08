@@ -114,7 +114,7 @@ background.tokenSetup = function() {
 
 background.init = function() {
   background.version();
-  background.tokenSetup();
+  // background.tokenSetup();
   // background.refreshUI();
   background.listen();
 }
