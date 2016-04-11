@@ -7,16 +7,13 @@ google.clearToken = function() {
 
 google.requestAuth = function() {
 
-  var token = oAuthForDevices.loadToken();
-  
-  if(token !== null) {
-    oAuthForDevices.getContacts();
-    return;
-  }
+  oAuthForDevices.loadToken();
+  // oAuthForDevices.loadToken(oAuthForDevices.getContacts, function() {
+  //   oAuthForDevices.openPermissionWindow().then(function(permissionWindow) {
+  //     window.permissionWindow = permissionWindow;
+  //   });
+  // });
 
-  oAuthForDevices.openPermissionWindow().then(function(permissionWindow) {
-    window.permissionWindow = permissionWindow;
-  });
 };
 
 google.getContacts = function() {

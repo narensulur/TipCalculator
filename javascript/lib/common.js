@@ -26,9 +26,9 @@ function OAuthForDevices(tokenResponse) {
   }
 
   this.getContacts = function() {
-    // var token = onTokenChangeWrapper(this.tokenResponse);
+    // var token = setExpireDate(this.tokenResponse);
     if(this.tokenResponse != null) {
-      onTokenChangeWrapper({tokenResponse: this.tokenResponse});
+      // setExpireDate({tokenResponse: this.tokenResponse});
       ensureToken(this.tokenResponse, this.contactsApi);
     }
   }
@@ -53,19 +53,22 @@ function OAuthForDevices(tokenResponse) {
           var title = $(entry).find("title")[0].textContent;
           customers.push(title);
         }
-        window.localStorage['contacts'] = JSON.stringify(customers);
+        chrome.storage.local.set({'contacts': JSON.stringify(customers)});
+        // window.localStorage['contacts'] = JSON.stringify(customers);
         // callback(params);
       }
     });
   }
 
-  function onTokenChangeWrapper(params) {
+  function setExpireDate() {
     // expires_in params is in seconds (i think)
-    if(params.tokenResponse.expiryDate) {
-      return;
-    }
-    params.tokenResponse.expiryDate = new Date(Date.now() + (params.tokenResponse.expires_in * 1000));
-    that.onTokenChange(params, that.tokenResponse);
+    // if(that.tokenResponse.expiryDate) {
+    //   return;
+    // }
+    that.tokenResponse.expiryDate = new Date(Date.now() + (that.tokenResponse.expires_in * 1000));
+    console.debug(new Date(Date.now() + (that.tokenResponse.expires_in * 1000)));
+    console.debug(that.tokenResponse.expiryDate);
+    // that.onTokenChange(params, that.tokenResponse);
   } 
 
   function onTokenErrorWrapper(tokenResponse, response) {
@@ -189,8 +192,8 @@ function OAuthForDevices(tokenResponse) {
   }
   
   function ensureToken(tokenResponse, callback) {
+    console.log(tokenResponse);
     if (isExpired(tokenResponse)) {
-      console.log("token expired: ", tokenResponse);
       refreshToken(tokenResponse, function(response) {
         if(typeof(callback) != "undefined") {
           callback(response);
@@ -214,16 +217,17 @@ function OAuthForDevices(tokenResponse) {
       timeout: 5000,
       complete: function(jqXHR, textStatus) {
         if (textStatus == "success") {
+          that.tokenResponse = {};
           var refreshTokenResponse = JSON.parse(jqXHR.responseText);
-          tokenResponse.access_token = refreshTokenResponse.access_token;
-          tokenResponse.expires_in = refreshTokenResponse.expires_in;
-          tokenResponse.token_type = refreshTokenResponse.token_type;         
-          
-          var callbackParams = {tokenResponse:tokenResponse};
-          onTokenChangeWrapper(callbackParams);
-          console.debug(tokenResponse);
-          that.saveToken(tokenResponse);
-          console.log("expires at: " + tokenResponse.expiryDate.toString());
+          that.tokenResponse.access_token = refreshTokenResponse.access_token;
+          that.tokenResponse.expires_in = refreshTokenResponse.expires_in;
+          that.tokenResponse.token_type = refreshTokenResponse.token_type;         
+          that.tokenResponse.expiryDate = new Date(Date.now() + (that.tokenResponse.expires_in * 1000));
+
+          // setExpireDate();
+          console.debug(that.tokenResponse);
+          that.saveToken();
+          console.log(that.tokenResponse.expiryDate.toString());
           callback(callbackParams);
         } else {
           var callbackParams = {tokenResponse:tokenResponse};
@@ -256,6 +260,9 @@ function OAuthForDevices(tokenResponse) {
   // private isExpired
   function isExpired(tokenResponse) {
     var SECONDS_BUFFER = -300; // 5 min. yes negative, let's make the expiry date shorter to be safe
+    // console.debug(tokenResponse.expiryDate);
+    // console.debug(new Date(tokenResponse.expiryDate).addSeconds(SECONDS_BUFFER));
+    // console.debug(new Date().isAfter(new Date(tokenResponse.expiryDate).addSeconds(SECONDS_BUFFER, true)));
     return !tokenResponse.expiryDate || new Date().isAfter(new Date(tokenResponse.expiryDate).addSeconds(SECONDS_BUFFER, true));
   }
 
@@ -297,17 +304,30 @@ function OAuthForDevices(tokenResponse) {
     return dfd.promise();
   }
   
-  this.saveToken = function(tokenResponse) {
-    that.tokenResponse = tokenResponse;
-    window.localStorage['token'] = JSON.stringify(tokenResponse);
+  this.saveToken = function() {
+    // that.tokenResponse = tokenResponse;
+    // window.localStorage['token'] = JSON.stringify(tokenResponse);
+    console.debug(JSON.stringify(that.tokenResponse));
+    chrome.storage.local.set({'token': JSON.stringify(that.tokenResponse)});
   };
 
   this.loadToken = function() {
-    var token = window.localStorage['token'];
-    if(token) {
-      that.tokenResponse = JSON.parse(token);
-    }
-    return that.tokenResponse;
+    chrome.storage.local.get('token', function(item) {
+      // console.debug('got token');
+      // console.debug(item.token);
+      if(item.token) {
+        that.tokenResponse = JSON.parse(item.token);
+        that.getContacts();
+      } else {
+        that.openPermissionWindow();
+      }
+
+    });
+    // var token = window.localStorage['token'];
+    // if(token) {
+    //   that.tokenResponse = JSON.parse(token);
+    // }
+    // return that.tokenResponse;
   };
   
   this.clearToken = function() {
@@ -342,7 +362,7 @@ function OAuthForDevices(tokenResponse) {
             that.tokenResponse = tokenResponse;
 
             var callbackParams = {tokenResponse: that.tokenResponse};
-            onTokenChangeWrapper(callbackParams);
+            setExpireDate(callbackParams);
 
             that.saveToken(that.tokenResponse);
 

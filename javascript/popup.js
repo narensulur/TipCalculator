@@ -1,10 +1,12 @@
 
 $(function() {
 
-  if(localStorage.token) {
-    $('.auth').hide();
-    $('#get').show();
-  }
+  chrome.storage.local.get('token', function(item) {
+    if(item.token) {
+      $('.auth').hide();
+      $('#get').show();
+    }
+  });
 
   $('#auth').on('click', function() {
     chrome.extension.sendMessage({method: 'authtoken.get'});

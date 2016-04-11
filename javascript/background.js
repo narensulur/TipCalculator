@@ -3,36 +3,6 @@
 var oAuthForDevices;
 var background = {};
 
-background.BADGE_COLORS = {
-  ERROR: '#f00',
-  IN_PROGRESS: '#efefef'
-};
-
-background.updateBadge = function(props) {
-  if ('text' in props) {
-    chrome.browserAction.setBadgeText({'text': props.text});
-  }
-  if ('color' in props) {
-    chrome.browserAction.setBadgeBackgroundColor({'color': props.color});
-  }
-  if ('title' in props) {
-    chrome.browserAction.setTitle({'title': props.title});
-  }
-};
-
-background.refreshUI = function() {
-  chrome.identity.getAuthToken({'interactive': false}, function (authToken) {
-    if (chrome.runtime.lastError || !authToken) {
-      background.updateBadge({
-        'color': background.BADGE_COLORS.ERROR,
-        'text': '?',
-        'title': "Authorization Required"
-      });
-      return;
-    }
-  });
-}
-
 background.listen = function() {
   chrome.tabs.onUpdated.addListener(function onTabUpdated(tabId, changeInfo, tab) {
     if (changeInfo.status == "complete") {
@@ -91,17 +61,16 @@ background.listen = function() {
   });
 };
 
-background.getCustomers = function() {
-  return window.localStorage['contacts'];
-};
+// background.getCustomers = function() {
+//   return chrome.storage.local.get('contacts');
+// };
 
 background.version = function() {
   window.localStorage['version'] = chrome.app.getDetails().version;
 };
 
 background.tokenSetup = function() {
-  var tokenResponses = []; // TODO: setup localStorage for tokens
-  oAuthForDevices = new OAuthForDevices(tokenResponses);
+  oAuthForDevices = new OAuthForDevices();
   oAuthForDevices.setOnTokenChange(function(params, allTokens) {
     tokenResponses = allTokens;
     // localStorage["tokenResponses"] = JSON.stringify(allTokens);
@@ -114,8 +83,6 @@ background.tokenSetup = function() {
 
 background.init = function() {
   background.version();
-  // background.tokenSetup();
-  // background.refreshUI();
   background.listen();
 }
 
@@ -127,12 +94,10 @@ chrome.tabs.onUpdated.addListener(function(tabId, info, tab) {
   if (tab.url !== undefined && info.status == "complete" && tab.url.indexOf("https://calendar.google.com/calendar/render") > -1) {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
       var activeTab = tabs[0];
-      chrome.tabs.sendMessage(activeTab.id, {"message": background.getCustomers() });
-      // api(function(response) {
-      //   chrome.tabs.sendMessage(activeTab.id, {"message": response});
-      // }, function() { // fail, retry
-      //   background.retry = true;
-      // });
+      chrome.storage.local.get('contacts', function(item) {
+        console.debug(item.contacts);
+        chrome.tabs.sendMessage(activeTab.id, {"message": item.contacts });
+      });
     });
   }
 });
