@@ -186,7 +186,7 @@ function now() {
 }
 
 function today() {
-  var offsetToday = null; //localStorage["today"]; // because localStorage would be null (or lost) after being calling agenda/widget and then doing a checkEvents(true) ???
+  var offsetToday = null;
   if (offsetToday) {
     return new Date(offsetToday);
   } else {

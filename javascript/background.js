@@ -17,7 +17,7 @@ background.listen = function() {
               oAuthForDevices.getAccessToken(code, function(params) {
                 if (params.tokenResponse) {
                   if (params.error) {
-                    alert("Access token error: " + params.error + " try signing out and into your Google Calendar or try again later!");
+                    alert("Access token error: " + params.error + " try signing out and into your Google Account or try again later!");
                   } else {
                     console.debug(params.tokenResponse);
                   }
@@ -32,14 +32,13 @@ background.listen = function() {
               });
             } else {
               var error = "error: code not found, please try again!";
-              logError(error)
+              // logError(error);
               alert(error);
             }
           } else if (tab.title.match(/denied/i)) {
             chrome.tabs.remove(tabId);
-            // openUrl("http://jasonsavard.com/wiki/Granting_access?ref=permissionDenied&ext=calendar&state=" + encodeURIComponent(oAuthForDevices.getStateParam()) + "&title=" + encodeURIComponent(tab.title));
           } else {
-            logError(tab.title);
+            // logError(tab.title);
             alert("error " + tab.title + " please try again or try later!");
           }
         }
@@ -67,18 +66,6 @@ background.listen = function() {
 
 background.version = function() {
   window.localStorage['version'] = chrome.app.getDetails().version;
-};
-
-background.tokenSetup = function() {
-  oAuthForDevices = new OAuthForDevices();
-  oAuthForDevices.setOnTokenChange(function(params, allTokens) {
-    tokenResponses = allTokens;
-    // localStorage["tokenResponses"] = JSON.stringify(allTokens);
-  });
-  oAuthForDevices.setOnTokenError(function(tokenResponse, response) {
-    // logout();
-    alert('logout');
-  });
 };
 
 background.init = function() {

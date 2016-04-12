@@ -10,9 +10,9 @@ $(function() {
   //   method: 'contacts.get'
   // });
 
-  customers = window.localStorage['customers'];
+  // customers = window.localStorage['customers'];
 
-  data = $.map(customers, function (customer) { return { value: customer, data: { category: 'Customers' }}; });
+  // data = $.map(customers, function (customer) { return { value: customer, data: { category: 'Customers' }}; });
   
   $(document).keydown(function() {
     isActive = $('.cb-event-title-input').attr('active');

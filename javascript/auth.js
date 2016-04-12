@@ -6,18 +6,11 @@ google.clearToken = function() {
 };
 
 google.requestAuth = function() {
-
   oAuthForDevices.loadToken();
-  // oAuthForDevices.loadToken(oAuthForDevices.getContacts, function() {
-  //   oAuthForDevices.openPermissionWindow().then(function(permissionWindow) {
-  //     window.permissionWindow = permissionWindow;
-  //   });
-  // });
-
 };
 
 google.getContacts = function() {
-  console.debug('get contacts');
-  oAuthForDevices.getContacts();
+  // console.debug('get contacts');
+  oAuthForDevices.loadToken();
 };
 

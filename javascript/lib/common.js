@@ -9,7 +9,7 @@ function OAuthForDevices(tokenResponse) {
   
   var BASE_URI = "https://www.google.com/m8/feeds/contacts/default/full";
 
-  var STATE = "QuickbooksCalendar"; // roundtrip param use to identify correct code response window (because both gmail and calendar other extensions might popup this window also
+  var STATE = "QuickbooksCalendar"; // roundtrip param use to identify correct code response window
   
   // Need this because 'this' keyword will be out of scope within this.blah methods like callbacks etc.
   var that = this;
@@ -26,9 +26,7 @@ function OAuthForDevices(tokenResponse) {
   }
 
   this.getContacts = function() {
-    // var token = setExpireDate(this.tokenResponse);
     if(this.tokenResponse != null) {
-      // setExpireDate({tokenResponse: this.tokenResponse});
       ensureToken(this.tokenResponse, this.contactsApi);
     }
   }
@@ -45,8 +43,6 @@ function OAuthForDevices(tokenResponse) {
         $xml = $(params.data);
         var feed = $xml[0].childNodes[0];
         var entries = $(feed).find( "entry" );
-        // console.debug(entries);
-        // console.debug(entries.length);
         var customers = [];
         for (var i = 0; i < entries.length; i++) {
           var entry = entries[i];
@@ -54,46 +50,18 @@ function OAuthForDevices(tokenResponse) {
           customers.push(title);
         }
         chrome.storage.local.set({'contacts': JSON.stringify(customers)});
-        // window.localStorage['contacts'] = JSON.stringify(customers);
-        // callback(params);
       }
     });
   }
 
   function setExpireDate() {
-    // expires_in params is in seconds (i think)
-    // if(that.tokenResponse.expiryDate) {
-    //   return;
-    // }
     that.tokenResponse.expiryDate = new Date(Date.now() + (that.tokenResponse.expires_in * 1000));
-    console.debug(new Date(Date.now() + (that.tokenResponse.expires_in * 1000)));
-    console.debug(that.tokenResponse.expiryDate);
-    // that.onTokenChange(params, that.tokenResponse);
   } 
-
-  function onTokenErrorWrapper(tokenResponse, response) {
-    // 400 is returned when refresing token and 401 when .send returns... // means user has problably revoked access: statusText = Unauthorized message = Invalid Credentials
-    if ((response.oauthAction == "refreshToken" && response.jqXHR.status == 400) || response.jqXHR.status == 401) {
-      console.error("user probably revoked access so removing token:", response);
-      that.removeTokenResponse(tokenResponse);      
-      // that.onTokenError(tokenResponse, response);
-    }
-  } 
-
-  // setup default functions...
-  // params: changedToken, allTokens
-  this.onTokenChange = function() {};
-  this.onTokenError = function() {};
   
-  this.openPermissionWindow = function(email) {
+  this.openPermissionWindow = function() {
     return new Promise(function(resolve, reject) {
-      // prompt=select_account&
-      var url = GOOGLE_AUTH_URL + "?response_type=code&client_id=" + GOOGLE_CLIENT_ID + "&redirect_uri=" + GOOGLE_REDIRECT_URI + "&scope=" + encodeURIComponent(GOOGLE_SCOPE) + "&state=" + STATE;
-      if (email) {
-        url += "&login_hint=" + encodeURIComponent(email);
-      } else {
-        url += "&prompt=select_account"; // does work :)
-      }
+      
+      var url = GOOGLE_AUTH_URL + "?response_type=code&client_id=" + GOOGLE_CLIENT_ID + "&redirect_uri=" + GOOGLE_REDIRECT_URI + "&scope=" + encodeURIComponent(GOOGLE_SCOPE) + "&state=" + STATE + "&prompt=select_account";
       
       var width = 900;
       var height = 700;
@@ -103,17 +71,10 @@ function OAuthForDevices(tokenResponse) {
       chrome.windows.create({url:url, width:width, height:height, left:left, top:top, type:"popup"}, function(newWindow) {
         resolve(newWindow);
       });
+
     });
   }
   
-  
-  this.setOnTokenChange = function(onTokenChange) {
-    this.onTokenChange = onTokenChange;
-  }
-
-  this.setOnTokenError = function(onTokenError) {
-    this.onTokenError = onTokenError;
-  }
   
   function sendOAuthRequest(params, callback) {
     // must append the access token to every request
@@ -207,8 +168,13 @@ function OAuthForDevices(tokenResponse) {
   }
   
   function refreshToken(tokenResponse, callback) {
-    // must refresh token
-    // console.log("refresh token: " + tokenResponse.userEmail + " " + now().toString());
+    if(!tokenResponse.refresh_token) {
+      console.error('no refresh token');
+      console.debug(tokenResponse);
+      return;
+    }
+    console.log('refresh token');
+    console.log(tokenResponse);
     $.ajax({
       type: "POST",
       url: GOOGLE_TOKEN_URL,      
@@ -222,13 +188,14 @@ function OAuthForDevices(tokenResponse) {
           that.tokenResponse.access_token = refreshTokenResponse.access_token;
           that.tokenResponse.expires_in = refreshTokenResponse.expires_in;
           that.tokenResponse.token_type = refreshTokenResponse.token_type;         
-          that.tokenResponse.expiryDate = new Date(Date.now() + (that.tokenResponse.expires_in * 1000));
+          // that.tokenResponse.expiryDate = new Date(Date.now() + (that.tokenResponse.expires_in * 1000));
 
-          // setExpireDate();
-          console.debug(that.tokenResponse);
+          setExpireDate();
           that.saveToken();
+
           console.log(that.tokenResponse.expiryDate.toString());
           callback(callbackParams);
+
         } else {
           var callbackParams = {tokenResponse:tokenResponse};
           
@@ -250,7 +217,6 @@ function OAuthForDevices(tokenResponse) {
           
           callbackParams.jqXHR = jqXHR;
           callbackParams.oauthAction = "refreshToken";
-          // logError(callbackParams.error);
           callback(callbackParams);
         }
       }
@@ -259,62 +225,20 @@ function OAuthForDevices(tokenResponse) {
   
   // private isExpired
   function isExpired(tokenResponse) {
-    var SECONDS_BUFFER = -300; // 5 min. yes negative, let's make the expiry date shorter to be safe
-    // console.debug(tokenResponse.expiryDate);
-    // console.debug(new Date(tokenResponse.expiryDate).addSeconds(SECONDS_BUFFER));
-    // console.debug(new Date().isAfter(new Date(tokenResponse.expiryDate).addSeconds(SECONDS_BUFFER, true)));
+    var SECONDS_BUFFER = -300; // 5 min
     return !tokenResponse.expiryDate || new Date().isAfter(new Date(tokenResponse.expiryDate).addSeconds(SECONDS_BUFFER, true));
-  }
-
-  this.send = function(params, callback) {
-    var dfd = new $.Deferred();
-    // save all args in this sendrequet to call it back later
-    that.params = params;
-    if (!callback) {
-      callback = function() {};
-    }
-    that.callback = callback;
-    
-    var tokenResponse = that.findTokenResponse(params);   
-    if (tokenResponse) {
-      ensureToken(tokenResponse, function(response) {
-        if (response.error) {
-          onTokenErrorWrapper(tokenResponse, response);           
-          response.roundtripArg = params.roundtripArg;            
-          callback(response);
-          dfd.resolve(response);            
-        } else {
-          sendOAuthRequest(params, function(response) {
-            if (response.error) {
-              onTokenErrorWrapper(tokenResponse, response);
-            }
-            response.roundtripArg = params.roundtripArg;
-            callback(response);
-            dfd.resolve(response);            
-          });
-        }
-      });     
-    } else {
-      var error = "no token response found for email: " + params.userEmail;
-      console.warn(error, params);
-      params.error = error;
-      that.callback(params);
-      dfd.resolve(params);
-    }
-    return dfd.promise();
   }
   
   this.saveToken = function() {
     // that.tokenResponse = tokenResponse;
     // window.localStorage['token'] = JSON.stringify(tokenResponse);
-    console.debug(JSON.stringify(that.tokenResponse));
     chrome.storage.local.set({'token': JSON.stringify(that.tokenResponse)});
   };
 
   this.loadToken = function() {
     chrome.storage.local.get('token', function(item) {
-      // console.debug('got token');
-      // console.debug(item.token);
+      console.debug('got token');
+      console.debug(item.token);
       if(item.token) {
         that.tokenResponse = JSON.parse(item.token);
         that.getContacts();
@@ -323,19 +247,14 @@ function OAuthForDevices(tokenResponse) {
       }
 
     });
-    // var token = window.localStorage['token'];
-    // if(token) {
-    //   that.tokenResponse = JSON.parse(token);
-    // }
-    // return that.tokenResponse;
   };
   
   this.clearToken = function() {
     console.debug('CLEARED');
-    window.localStorage.removeItem('contacts');
-    window.localStorage.removeItem('token');
+    chrome.storage.local.remove('contacts');
+    chrome.storage.local.remove('token');
     that.tokenResponse = null;
-    that.onTokenChange(null, that.tokenResponse);
+    // that.onTokenChange(null, that.tokenResponse);
   };
 
   this.getAccessToken = function(code, callback) {
@@ -361,10 +280,9 @@ function OAuthForDevices(tokenResponse) {
             
             that.tokenResponse = tokenResponse;
 
-            var callbackParams = {tokenResponse: that.tokenResponse};
-            setExpireDate(callbackParams);
+            setExpireDate();
 
-            that.saveToken(that.tokenResponse);
+            that.saveToken();
 
             that.contactsApi();
 
