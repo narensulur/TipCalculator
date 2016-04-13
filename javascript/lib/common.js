@@ -171,6 +171,8 @@ function OAuthForDevices(tokenResponse) {
     if(!tokenResponse.refresh_token) {
       console.error('no refresh token');
       console.debug(tokenResponse);
+      this.clearToken();
+      this.loadToken();
       return;
     }
     console.log('refresh token');
@@ -187,8 +189,8 @@ function OAuthForDevices(tokenResponse) {
           var refreshTokenResponse = JSON.parse(jqXHR.responseText);
           that.tokenResponse.access_token = refreshTokenResponse.access_token;
           that.tokenResponse.expires_in = refreshTokenResponse.expires_in;
-          that.tokenResponse.token_type = refreshTokenResponse.token_type;         
-          // that.tokenResponse.expiryDate = new Date(Date.now() + (that.tokenResponse.expires_in * 1000));
+          that.tokenResponse.token_type = refreshTokenResponse.token_type; 
+          that.tokenResponse.refresh_token = tokenResponse.refresh_token;
 
           setExpireDate();
           that.saveToken();
@@ -232,6 +234,8 @@ function OAuthForDevices(tokenResponse) {
   this.saveToken = function() {
     // that.tokenResponse = tokenResponse;
     // window.localStorage['token'] = JSON.stringify(tokenResponse);
+    console.debug('SAVED');
+    console.debug(that.tokenResponse);
     chrome.storage.local.set({'token': JSON.stringify(that.tokenResponse)});
   };
 
