@@ -6,14 +6,6 @@ $(function() {
 
   console.debug('Google Calendar Loaded');
 
-  // chrome.extension.sendMessage({
-  //   method: 'contacts.get'
-  // });
-
-  // customers = window.localStorage['customers'];
-
-  // data = $.map(customers, function (customer) { return { value: customer, data: { category: 'Customers' }}; });
-  
   $(document).keydown(function() {
     isActive = $('.cb-event-title-input').attr('active');
     $('.cb-event-title-input').attr('active', 'true');
@@ -25,7 +17,7 @@ $(function() {
 
 });
 
-chrome.runtime.onMessage.addListener(
+chrome[runtimeOrExtension].onMessage.addListener(
   function(request, sender, sendResponse) {
     var customers = JSON.parse(request.message);
     data = $.map(customers, function (customer) { return { value: customer, data: { category: 'Customers' }}; });

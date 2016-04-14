@@ -45,7 +45,7 @@ background.listen = function() {
     }
   });
 
-  chrome.extension.onMessage.addListener(function(request, sender, opt_callback) {
+  chrome[runtimeOrExtension].onMessage.addListener(function(request, sender, opt_callback) {
     switch(request.method) {
       case "contacts.get": 
         google.getContacts();
@@ -65,11 +65,13 @@ background.listen = function() {
 // };
 
 background.version = function() {
-  window.localStorage['version'] = chrome.app.getDetails().version;
+  if(chrome.app) {
+    window.localStorage['version'] = chrome.app.getDetails().version;
+  }
 };
 
 background.init = function() {
-  background.version();
+  // background.version();
   background.listen();
 }
 

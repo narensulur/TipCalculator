@@ -1,3 +1,7 @@
+
+var runtimeOrExtension = chrome[runtimeOrExtension] && chrome[runtimeOrExtension].sendMessage ? 'runtime' : 'extension';
+if(!chrome.app) { runtimeOrExtension = "runtime"; } // firefox specific
+
 function OAuthForDevices(tokenResponse) {
   
   var GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/auth";
@@ -35,7 +39,7 @@ function OAuthForDevices(tokenResponse) {
     if(!that.tokenResponse) {
       return;
     }
-    chrome.extension.sendMessage({method: 'authtoken.success'});
+    chrome[runtimeOrExtension].sendMessage({method: 'authtoken.success'});
     sendOAuthRequest({tokenResponse: that.tokenResponse, url: "/"}, function(params) {     
       if (params.error) {
         console.error("failed, need token refresh");
@@ -124,7 +128,7 @@ function OAuthForDevices(tokenResponse) {
             // happens when user does a method like DELETE where this no content returned
             data = {};
           }
-          // chrome.extension.sendMessage({method: 'authtoken.success'});
+          // chrome[runtimeOrExtension].sendMessage({method: 'authtoken.success'});
           callback({data:data});
         } else {
           console.error("error getting data", jqXHR);
@@ -339,5 +343,3 @@ function setUrlParam(url, param, value) {
   
   return newUrl;
 }
-
-

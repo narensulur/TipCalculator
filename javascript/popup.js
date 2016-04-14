@@ -9,16 +9,16 @@ $(function() {
   });
 
   $('#auth').on('click', function() {
-    chrome.extension.sendMessage({method: 'authtoken.get'});
+    chrome[runtimeOrExtension].sendMessage({method: 'authtoken.get'});
   });
   $('#get').on('click', function() {
-    chrome.extension.sendMessage({method: 'authtoken.get'});
+    chrome[runtimeOrExtension].sendMessage({method: 'authtoken.get'});
   });
   $('#clear').on('click', function() {
-    chrome.extension.sendMessage({method: 'authtoken.clear'});
+    chrome[runtimeOrExtension].sendMessage({method: 'authtoken.clear'});
   });
 
-  chrome.extension.onMessage.addListener(function(request, sender, opt_callback) {
+  chrome[runtimeOrExtension].onMessage.addListener(function(request, sender, opt_callback) {
     switch(request.method) {
       case "authtoken.clear": 
         $('.auth').show();

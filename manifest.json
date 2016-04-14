@@ -12,6 +12,12 @@
   "background": {
     "page": "background.html"
   },
+  "applications": {
+    "gecko": {
+      "id": "Alexander_Shive@intuit.com",
+      "strict_min_version": "45.0.0"
+    }
+  },
   "content_scripts": [
     {
       "matches": ["https://calendar.google.com/*"],
@@ -19,6 +25,7 @@
       "js": [
         "javascript/lib/jquery.min.js", 
         "javascript/lib/jquery.autocomplete.min.js", 
+        "javascript/lib/common.js",
         "javascript/cal.js"
       ]
     }
