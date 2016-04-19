@@ -15,13 +15,16 @@ background.listen = function() {
               chrome.tabs.remove(tabId);
               
               oAuthForDevices.getAccessToken(code, function(params) {
+                alert("Success!");
                 if (params.tokenResponse) {
+                  alert("Got Token Response");
                   if (params.error) {
                     alert("Access token error: " + params.error + " try signing out and into your Google Account or try again later!");
                   } else {
-                    console.debug(params.tokenResponse);
+                    // console.debug(params.tokenResponse);
+                    background.getCustomers();
                   }
-                  
+                  background.getCustomers();
                 } else {
                   if (params.warning) {
                     // ignore: might by re-trying to fetch the userEmail for the non default account                  
@@ -60,9 +63,15 @@ background.listen = function() {
   });
 };
 
-// background.getCustomers = function() {
-//   return chrome.storage.local.get('contacts');
-// };
+background.getCustomers = function() {
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    var activeTab = tabs[0];
+    chrome.storage.local.get('contacts', function(item) {
+      // console.debug(item.contacts);
+      chrome.tabs.sendMessage(activeTab.id, {"message": item.contacts });
+    });
+  });
+};
 
 background.version = function() {
   if(chrome.app) {
@@ -73,7 +82,7 @@ background.version = function() {
 background.init = function() {
   // background.version();
   background.listen();
-}
+};
 
 $(document).ready(function() {
   background.init();
@@ -81,12 +90,6 @@ $(document).ready(function() {
 
 chrome.tabs.onUpdated.addListener(function(tabId, info, tab) {
   if (tab.url !== undefined && info.status == "complete" && tab.url.indexOf("https://calendar.google.com/calendar/render") > -1) {
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      var activeTab = tabs[0];
-      chrome.storage.local.get('contacts', function(item) {
-        console.debug(item.contacts);
-        chrome.tabs.sendMessage(activeTab.id, {"message": item.contacts });
-      });
-    });
+    background.getCustomers();
   }
 });

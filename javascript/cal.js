@@ -7,10 +7,10 @@ $(function() {
   console.debug('Google Calendar Loaded');
 
   $(document).keydown(function() {
-    isActive = $('.cb-event-title-input').attr('active');
-    $('.cb-event-title-input').attr('active', 'true');
-    if(!isActive) {
-      var title = '.cb-event-title-input';
+    var title = '.cb-event-title-input';
+    isActive = $(title).attr('active');
+    if(!isActive && data.length > 0) {
+      $(title).attr('active', 'true');
       autoComplete(title, data);
     }
   });
@@ -19,12 +19,13 @@ $(function() {
 
 chrome[runtimeOrExtension].onMessage.addListener(
   function(request, sender, sendResponse) {
-    var customers = JSON.parse(request.message);
-    data = $.map(customers, function (customer) { return { value: customer, data: { category: 'Customers' }}; });
+    if(request.message) {
+      console.debug(request);
+      var customers = JSON.parse(request.message);
+      data = $.map(customers, function (customer) { return { value: customer, data: { category: 'Customers' }}; });
+    }
   }
 );
-  
-
 
 function autoComplete(title, data) {
 

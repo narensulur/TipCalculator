@@ -53,7 +53,17 @@ function OAuthForDevices(tokenResponse) {
           var title = $(entry).find("title")[0].textContent;
           customers.push(title);
         }
+
         chrome.storage.local.set({'contacts': JSON.stringify(customers)});
+
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+          var activeTab = tabs[0];
+          chrome.storage.local.get('contacts', function(item) {
+            console.debug(item.contacts);
+            chrome.tabs.sendMessage(activeTab.id, {"message": item.contacts });
+          });
+        });
+
       }
     });
   }
