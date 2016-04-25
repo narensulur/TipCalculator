@@ -1,29 +1,35 @@
 <!DOCTYPE html>
-<!--
- * Copyright (c) 2012 The Chromium Authors. All rights reserved.  Use of this
- * source code is governed by a BSD-style license that can be found in the
- * LICENSE file.
--->
 <html>
 <head>
-<title>OAuth 2.0 Options</title>
-  <script src="../javascript/oauth2/oauth2.js"></script>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto">
+  <link rel="stylesheet" href="../styles/popup.css" type="text/css">
+  <script src="../javascript/lib/jquery.min.js"></script>
+  <script src="../javascript/lib/common.js"></script>
   <script src="../javascript/popup.js"></script>
-  <style>
-    h1 { font-size: 20px }
-    button.authorized { background: green }
-  </style>
 </head>
 <body>
 
-<h1>OAuth 2.0 Permissions</h1>
+<header>
+  <div class="popup-title">
+    <a data-href="calendar_ui_url" target="_blank">
+      <span class="i18n" id="logo_text">Google Calendar</span>
+    </a>
+  </div>
+</header>
+<section>
+  <p class="auth">
+  You need to grant it access to your contacts. This is a one-time setup step required before you can use this app.
+  </p>
+  <button class="button i18n auth" id="auth">Authorize Quickbooks</button>
+  <button class="button i18n hidden" id="get">Refresh Contacts</button>
+  <br />
+  <br />
+  <button class="button i18n" id="clear">Clear Token</button>
+</section>
 
-<p>
-<button id="google">
-  Grant Google Access
-</button>
-<button id="clear">Clear Tokens</button>
-</p>
+
+
 
 </body>
 </html>

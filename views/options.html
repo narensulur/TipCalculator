@@ -1,44 +1,18 @@
 <!DOCTYPE html>
-<!--
- * Copyright (c) 2012 The Chromium Authors. All rights reserved.  Use of this
- * source code is governed by a BSD-style license that can be found in the
- * LICENSE file.
--->
 <html>
 <head>
-<title>OAuth 2.0 Options</title>
-  <script src="../javascript/oauth2/oauth2.js"></script>
-  <script src="../javascript/options.js"></script>
-  <script src="../javascript/auth.js"></script>
-  <style>
-    h1 { font-size: 20px }
-    button.authorized { background: green }
-  </style>
+<script src="../javascript/lib/jquery.min.js"></script>
+<script src="../javascript/lib/moment.min.js"></script>
+<script src="../javascript/options.js"></script>
 </head>
 <body>
 
-<p>
-<strong><span id="name"></span> is working!</strong>
-<a href="https://developers.google.com/google-apps/calendar/v2/developers_guide_protocol">Learn more</a>.
-</p>
+<p>Test Zone</p>
 
-<p>
-We recommend the <a id="link">Google Calendar</a> Extension.
-</p>
+<button id="authorize">Authorize</button>
+<button id="clear">Clear tokens</button>
 
-<p>
+<button id="close">Ok, cool</button>
 
-<div class="flow">
-  <button id="google">
-    Grant Google Access
-  </button>
-  <button id="clear">Clear Tokens</button>
-</div>
-
-
-<button id="remove">Ok, cool</button>
-</p>
-
-<script src="../javascript/options.js"></script>
 </body>
 </html>

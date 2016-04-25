@@ -6,33 +6,26 @@ $(function() {
 
   console.debug('Google Calendar Loaded');
 
-  data = $.map(customers, function (customer) { return { value: customer, data: { category: 'Customers' }}; });
-  
   $(document).keydown(function() {
-    isActive = $('.cb-event-title-input').attr('active');
-    $('.cb-event-title-input').attr('active', 'true');
-    if(!isActive) {
-      var title = '.cb-event-title-input';
+    var title = '.cb-event-title-input';
+    isActive = $(title).attr('active');
+    if(!isActive && data.length > 0) {
+      $(title).attr('active', 'true');
       autoComplete(title, data);
     }
   });
 
 });
 
-chrome.runtime.onMessage.addListener(
+chrome[runtimeOrExtension].onMessage.addListener(
   function(request, sender, sendResponse) {
-    var json = JSON.parse(request.message);
-    for (var i = 0; i < json.connections.length; i++) {
-      var person = json.connections[i];
-      if(person.names) {
-        customers.push(person.names[0].displayName);
-      }
+    if(request.message) {
+      console.debug(request);
+      var customers = JSON.parse(request.message);
+      data = $.map(customers, function (customer) { return { value: customer, data: { category: 'Customers' }}; });
     }
-    data = $.map(customers, function (customer) { return { value: customer, data: { category: 'Customers' }}; });
   }
 );
-  
-
 
 function autoComplete(title, data) {
 
