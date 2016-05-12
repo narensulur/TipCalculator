@@ -10,8 +10,6 @@ function OAuthForDevices(tokenResponse) {
   var GOOGLE_CLIENT_SECRET = "vDzGjgWbX6F8Gji4u88qe3-C";
   var GOOGLE_REDIRECT_URI = "urn:ietf:wg:oauth:2.0:oob";
   var GOOGLE_SCOPE = "https://www.google.com/m8/feeds/";
-  
-  var BASE_URI = "https://www.google.com/m8/feeds/contacts/default/full";
 
   var STATE = "QuickbooksCalendar"; // roundtrip param use to identify correct code response window
   
@@ -33,14 +31,35 @@ function OAuthForDevices(tokenResponse) {
     if(this.tokenResponse != null) {
       ensureToken(this.tokenResponse, this.contactsApi);
     }
-  }
+  };
 
-  this.contactsApi = function() {
-    if(!that.tokenResponse) {
-      return;
-    }
-    chrome[runtimeOrExtension].sendMessage({method: 'authtoken.success'});
-    sendOAuthRequest({tokenResponse: that.tokenResponse, url: "/"}, function(params) {     
+  this.getGroupsAPI = function(callback) {
+    sendOAuthRequest({tokenResponse: that.tokenResponse, url: "groups/default/full/"}, function(params) { 
+      if (params.error) {
+        console.error("failed, need token refresh");
+      } else {
+        $xml = $(params.data);
+        var feed = $xml[0].childNodes[0];
+        var entries = $(feed).find( "entry" );
+        var groups = [];
+        var groupIds = [];
+        for (var i = 0; i < entries.length; i++) {
+          var entry = entries[i];
+          var title = $(entry).find("title")[0].textContent;
+          var link = $(entry).find("link")[0].getAttribute('href');
+          groups.push(title);
+          groupIds.push(link);
+        }
+        console.debug(groups);
+        if(typeof(callback) === "function") {
+          callback();
+        }
+      }
+    });
+  };
+
+  this.getContactsAPI = function(callback) {
+    sendOAuthRequest({tokenResponse: that.tokenResponse, url: "contacts/default/full/"}, function(params) {     
       if (params.error) {
         console.error("failed, need token refresh");
       } else {
@@ -66,6 +85,19 @@ function OAuthForDevices(tokenResponse) {
 
       }
     });
+  }
+
+  this.contactsApi = function() {
+
+    if(!that.tokenResponse) {
+      return;
+    }
+    
+    chrome[runtimeOrExtension].sendMessage({method: 'authtoken.success'});
+
+    // This calls groups first then contacts to better organize
+    that.getGroupsAPI(that.getContactsAPI);
+
   }
 
   function setExpireDate() {
@@ -121,7 +153,7 @@ function OAuthForDevices(tokenResponse) {
     
     $.ajax({
       type: params.type,
-      url: BASE_URI + params.url,
+      url: GOOGLE_SCOPE + params.url,
       data: params.data,
       headers: {"GData-Version": "3.0"},
       contentType: params.contentType,
