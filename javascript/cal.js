@@ -66,7 +66,7 @@ chrome[runtimeOrExtension].onMessage.addListener(
           data.push(customerList[j]);
         };
       };
-      console.debug(data);
+      // console.debug(data);
     }
   }
 );
