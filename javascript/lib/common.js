@@ -2,6 +2,8 @@
 var runtimeOrExtension = chrome[runtimeOrExtension] && chrome[runtimeOrExtension].sendMessage ? 'runtime' : 'extension';
 if(!chrome.app) { runtimeOrExtension = "runtime"; } // firefox specific
 
+var quickbooksGroup = "Quickbooks Customers";
+
 function OAuthForDevices(tokenResponse) {
   
   var GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/auth";
@@ -15,6 +17,9 @@ function OAuthForDevices(tokenResponse) {
   
   // Need this because 'this' keyword will be out of scope within this.blah methods like callbacks etc.
   var that = this;
+
+  this.groupNames = [];
+  this.groupIds = [];
   
   this.tokenResponse = null;
   if (tokenResponse) {
@@ -41,19 +46,36 @@ function OAuthForDevices(tokenResponse) {
         $xml = $(params.data);
         var feed = $xml[0].childNodes[0];
         var entries = $(feed).find( "entry" );
-        var groups = [];
-        var groupIds = [];
+        that.groupNames = [];
+        that.groupIds = [];
+
         for (var i = 0; i < entries.length; i++) {
           var entry = entries[i];
-          var title = $(entry).find("title")[0].textContent;
-          var link = $(entry).find("link")[0].getAttribute('href');
-          groups.push(title);
-          groupIds.push(link);
+          var title = $(entry).find("title")[0].textContent.replace("System Group: ", "");
+          var link = $(entry).find("link")[0].getAttribute('href').split('/').pop();
+          that.groupNames.push(title);
+          that.groupIds.push(link);
         }
-        console.debug(groups);
+
+        // Match QBO custom group name
+        if(that.groupNames) {
+          var groupIndex = 0;
+          for(var g = 0; g < that.groupNames.length; g++) {
+            if(that.groupNames[g] == quickbooksGroup) {
+              groupIndex = g;
+            }
+          }
+          // Move QBO group to the top
+          if(groupIndex > 0) {
+            arraymove(that.groupNames, groupIndex, 0);
+            arraymove(that.groupIds, groupIndex, 0);
+          }
+        }
+
         if(typeof(callback) === "function") {
           callback();
         }
+
       }
     });
   };
@@ -67,18 +89,46 @@ function OAuthForDevices(tokenResponse) {
         var feed = $xml[0].childNodes[0];
         var entries = $(feed).find( "entry" );
         var customers = [];
-        for (var i = 0; i < entries.length; i++) {
-          var entry = entries[i];
-          var title = $(entry).find("title")[0].textContent;
-          customers.push(title);
-        }
+
+        // console.debug(that.groupNames.length);
+
+        for (var i = 0; i < that.groupNames.length; i++) {
+
+          var groupName = that.groupNames[i];
+          var groupId = that.groupIds[i];
+
+          var group = [];
+        
+          for (var j = 0; j < entries.length; j++) {
+            var entry = entries[j];
+            var customerName = $(entry).find("title")[0].textContent;
+            var customerGroup = $(entry).find("groupMembershipInfo")[0];
+            if(customerGroup && customerName) {
+              var customerGroupId = $(customerGroup).attr('href').split('/').pop();
+              // console.debug(customerName + " " + customerGroupId);
+              if(customerGroupId == groupId) {
+                // add to group
+                var customer = { value: customerName, data: { category: groupName }};
+                group.push(customer);
+              }
+              // var groupIndex = that.groupIds.indexOf(groupId);
+            }
+          }
+
+          if(group.length > 0) {
+            customers.push(group);
+          }
+
+        } // end groupNames loop
+
+        // console.debug(that.groupIds);
+        // console.debug(entries);
 
         chrome.storage.local.set({'contacts': JSON.stringify(customers)});
 
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
           var activeTab = tabs[0];
           chrome.storage.local.get('contacts', function(item) {
-            console.debug(item.contacts);
             chrome.tabs.sendMessage(activeTab.id, {"message": item.contacts });
           });
         });
@@ -216,7 +266,7 @@ function OAuthForDevices(tokenResponse) {
   function refreshToken(tokenResponse, callback) {
     if(!tokenResponse.refresh_token) {
       console.error('no refresh token');
-      console.debug(tokenResponse);
+      // console.debug(tokenResponse);
       this.clearToken();
       this.loadToken();
       return;
@@ -280,15 +330,15 @@ function OAuthForDevices(tokenResponse) {
   this.saveToken = function() {
     // that.tokenResponse = tokenResponse;
     // window.localStorage['token'] = JSON.stringify(tokenResponse);
-    console.debug('SAVED');
-    console.debug(that.tokenResponse);
+    // console.debug('SAVED');
+    // console.debug(that.tokenResponse);
     chrome.storage.local.set({'token': JSON.stringify(that.tokenResponse)});
   };
 
   this.loadToken = function() {
     chrome.storage.local.get('token', function(item) {
-      console.debug('got token');
-      console.debug(item.token);
+      // console.debug('got token');
+      // console.debug(item.token);
       if(item.token) {
         that.tokenResponse = JSON.parse(item.token);
         that.getContacts();
@@ -300,7 +350,7 @@ function OAuthForDevices(tokenResponse) {
   };
   
   this.clearToken = function() {
-    console.debug('CLEARED');
+    // console.debug('CLEARED');
     chrome.storage.local.remove('contacts');
     chrome.storage.local.remove('token');
     that.tokenResponse = null;
@@ -385,3 +435,11 @@ function setUrlParam(url, param, value) {
   
   return newUrl;
 }
+
+
+function arraymove(arr, fromIndex, toIndex) {
+    var element = arr[fromIndex];
+    arr.splice(fromIndex, 1);
+    arr.splice(toIndex, 0, element);
+}
+

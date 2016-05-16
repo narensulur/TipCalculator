@@ -58,8 +58,15 @@ $(function() {
 chrome[runtimeOrExtension].onMessage.addListener(
   function(request, sender, sendResponse) {
     if(request.message) {
-      var customers = JSON.parse(request.message);
-      data = $.map(customers, function (customer) { return { value: customer, data: { category: 'Customers' }}; });
+      data = [];
+      var customer = JSON.parse(request.message);
+      for (var i = 0; i < customer.length; i++) {
+        var customerList = customer[i];
+        for (var j = 0; j < customerList.length; j++) {
+          data.push(customerList[j]);
+        };
+      };
+      console.debug(data);
     }
   }
 );
@@ -69,9 +76,7 @@ function showForeground() {
   $foreground = $('#' + foregroundId);
   $background = $('#' + backgroundId);
 
-  // console.debug($background.val());
-
-  var regex = new RegExp(/\+/, "gi")
+  var regex = new RegExp(/\+/, "gi");
   var hasExistingPlus = $background.val().match(regex);
 
   if($foreground.css('display') != "none" || hasExistingPlus) {
