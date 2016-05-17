@@ -2,6 +2,7 @@ var customers = [];
 var data = [];
 var isActive = 0;
 var shiftKey = false;
+var showingSuggestions = false;
 
 var backgroundId = 'event-background';
 var foregroundId = 'event-main';
@@ -51,6 +52,12 @@ $(function() {
       $(title).autocomplete('dispose');
       $('.autocomplete-suggestions').remove();
     }
+  }).mouseup(function(e) {
+    if(!showingSuggestions) {
+      return;
+    }
+    $('#' + foregroundId).val($('#' + foregroundId).val() + " ");
+    showBackground();
   });
 
 });
@@ -101,7 +108,7 @@ function autoComplete(data) {
   $field.autocomplete({
         lookup: data,
         minChars: 1,
-        appendTo: appendTo,
+        appendTo: $($('#' + foregroundId).parent()),
         tabDisabled: true,
         // forceFixPosition: true,
         preserveInput: true,
@@ -113,10 +120,12 @@ function autoComplete(data) {
               var re = new RegExp('\\b' + $.Autocomplete.utils.escapeRegExChars(stringToReplace), 'gi');
               var showAutoComplete = re.test(suggestion.value);
               if(showAutoComplete === true) {
+                showingSuggestions = true;
                 showForeground();
               }
               return showAutoComplete;
             } else {
+              showingSuggestions = false;
               return false;
             }
         },
@@ -131,6 +140,8 @@ function autoComplete(data) {
             $('#' + backgroundId).val(newValue);
             
             $field.val(newValue + " ");
+
+            showingSuggestions = false;
 
         },
         showNoSuggestionNotice: false,

@@ -1,10 +1,10 @@
 {
-  "name": "Quickbooks Online Google Calendar",
+  "name": "Quickbooks Google Calendar",
   "description": "Quickbooks with Google Calendar",
   "manifest_version": 2,
   "default_locale":"en",
   "options_page": "views/popup.html",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "background": {
     "page": "background.html"
   },
@@ -43,7 +43,7 @@
     "default_icon": {
       "128": "images/icon-128.png"
     },
-    "default_title": "QBO Calendar",
+    "default_title": "QB Calendar",
     "default_popup": "views/popup.html"
   },
   "icons": {

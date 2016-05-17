@@ -90,7 +90,7 @@ function OAuthForDevices(tokenResponse) {
         var entries = $(feed).find( "entry" );
         var customers = [];
 
-        // console.debug(that.groupNames.length);
+        console.debug(entries);
 
         for (var i = 0; i < that.groupNames.length; i++) {
 
@@ -203,7 +203,7 @@ function OAuthForDevices(tokenResponse) {
     
     $.ajax({
       type: params.type,
-      url: GOOGLE_SCOPE + params.url,
+      url: GOOGLE_SCOPE + params.url + "&max-results=500",
       data: params.data,
       headers: {"GData-Version": "3.0"},
       contentType: params.contentType,
