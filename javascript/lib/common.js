@@ -133,6 +133,11 @@ function OAuthForDevices(tokenResponse) {
           });
         });
 
+        if(typeof(this.callback) === "function") {
+          this.callback();
+          this.callback = null;
+        }
+
       }
     });
   }
@@ -319,6 +324,13 @@ function OAuthForDevices(tokenResponse) {
         }
       }
     });
+  }
+
+  this.refresh = function() {
+    this.callback = function() {
+      chrome[runtimeOrExtension].sendMessage({method: 'authtoken.refresh'});
+    }
+    this.loadToken();
   }
   
   // private isExpired

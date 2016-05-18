@@ -53,6 +53,9 @@ background.listen = function() {
       case "contacts.get": 
         google.getContacts();
       break;
+      case "authtoken.refresh":
+        google.refresh(); 
+      break;
       case "authtoken.get": 
         google.requestAuth();
       break;
@@ -67,7 +70,6 @@ background.getCustomers = function() {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     var activeTab = tabs[0];
     chrome.storage.local.get('contacts', function(item) {
-      console.debug(item.contacts);
       chrome.tabs.sendMessage(activeTab.id, {"message": item.contacts });
     });
   });
