@@ -90,7 +90,7 @@ function OAuthForDevices(tokenResponse) {
         var entries = $(feed).find( "entry" );
         var customers = [];
 
-        console.debug(entries);
+        // console.debug(entries);
 
         for (var i = 0; i < that.groupNames.length; i++) {
 
@@ -102,13 +102,18 @@ function OAuthForDevices(tokenResponse) {
           for (var j = 0; j < entries.length; j++) {
             var entry = entries[j];
             var customerName = $(entry).find("title")[0].textContent;
+            var customerCompany = $(entry).find("organization")[0] ? $(entry).find("organization")[0].textContent : null;
             var customerGroup = $(entry).find("groupMembershipInfo")[0];
             if(customerGroup && customerName) {
               var customerGroupId = $(customerGroup).attr('href').split('/').pop();
               // console.debug(customerName + " " + customerGroupId);
               if(customerGroupId == groupId) {
                 // add to group
-                var customer = { value: customerName, data: { category: groupName }};
+                var customerNameValue = customerName;
+                if(customerCompany) {
+                  customerNameValue = customerCompany;
+                }
+                var customer = { value: customerNameValue, data: { category: groupName }};
                 group.push(customer);
               }
               // var groupIndex = that.groupIds.indexOf(groupId);
