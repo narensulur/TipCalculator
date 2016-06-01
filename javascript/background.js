@@ -2,6 +2,7 @@
 
 var oAuthForDevices;
 var background = {};
+var isInit = true;
 
 background.listen = function() {
   chrome.tabs.onUpdated.addListener(function onTabUpdated(tabId, changeInfo, tab) {
@@ -77,13 +78,34 @@ background.getCustomers = function() {
 
 background.version = function() {
   if(chrome.app) {
-    window.localStorage['version'] = chrome.app.getDetails().version;
+    window.localStorage['qbo_cal_version'] = chrome.app.getDetails().version;
+  }
+};
+
+background.checkInstall = function() {
+  if(!isInit) {
+    return;
+  }
+  if(!window.localStorage['qbo_cal_installed']) {
+    isInit = false;
+    $.ajax({
+      type: "GET",
+      url: "https://connector.appconnect.intuit.com/intuit/api/google-extension-install.json?token=k3thk1cdn8l212g",
+      timeout: 45000,
+      complete: function(jqXHR, textStatus) {
+        var status = getStatus(jqXHR, textStatus);
+        if (status == 200 || status == 204) {
+          window.localStorage['qbo_cal_installed'] = true;
+        }
+      }
+    });
   }
 };
 
 background.init = function() {
-  // background.version();
+  background.checkInstall();
   background.listen();
+  background.version();
 };
 
 $(document).ready(function() {

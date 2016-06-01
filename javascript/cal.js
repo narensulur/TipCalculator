@@ -3,6 +3,7 @@ var data = [];
 var isActive = 0;
 var shiftKey = false;
 var showingSuggestions = false;
+var googleField = false;
 
 var backgroundId = 'event-background';
 var foregroundId = 'event-main';
@@ -23,6 +24,15 @@ $(function() {
 
     if(code === 187 && shiftKey) {
       showForeground();
+    }
+
+    if(code === 13) {
+      // console.debug('ENTER');
+      // console.debug(googleField);
+      if(googleField === true) {
+        //send to API
+        apiCall();
+      }
     }
     
     isActive = $(title).attr('active');
@@ -78,8 +88,22 @@ chrome[runtimeOrExtension].onMessage.addListener(
   }
 );
 
-function showForeground() {
+function apiCall() {
+  $.ajax({
+      type: "GET",
+      url: "https://connector.appconnect.intuit.com/intuit/api/google-extension-add.json?token=k3thk1cdn8l212g",
+      timeout: 45000,
+      complete: function(jqXHR, textStatus) {
+        var status = getStatus(jqXHR, textStatus);
+        if (status == 200 || status == 204) {
+          // console.debug("API got it");
+        }
+      }
+    });
+}
 
+function showForeground() { // duplicated field
+  googleField = false;
   $foreground = $('#' + foregroundId);
   $background = $('#' + backgroundId);
 
@@ -93,7 +117,8 @@ function showForeground() {
   $foreground.val($background.val()).show().focus();
 }
 
-function showBackground() {
+function showBackground() { // Google input field
+  googleField = true;
   $('#' + foregroundId).hide();
   $('#' + backgroundId).val($('#' + foregroundId).val()).show().focus();
 }
