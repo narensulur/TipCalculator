@@ -57,6 +57,9 @@ function OAuthForDevices(tokenResponse) {
           that.groupIds.push(link);
         }
 
+        that.groupNames.push("Other Contacts");
+        that.groupIds.push("1");
+
         // Match QBO custom group name
         if(that.groupNames) {
           var groupIndex = 0;
@@ -104,13 +107,20 @@ function OAuthForDevices(tokenResponse) {
             var customerName = $(entry).find("title")[0].textContent;
             var customerCompany = $(entry).find("organization")[0] ? $(entry).find("organization")[0].textContent : null;
             var customerGroup = $(entry).find("groupMembershipInfo")[0];
+            var customerGroupId = 0;
+            if(!customerGroup) {
+              customerGroup = "Other Contacts";
+              customerGroupId = 1;
+            }
             if(customerGroup && customerName) {
-              var customerGroupId = $(customerGroup).attr('href').split('/').pop();
+              if(!customerGroupId) {
+                customerGroupId = $(customerGroup).attr('href').split('/').pop();
+              }
               // console.debug(customerName + " " + customerGroupId);
               if(customerGroupId == groupId) {
                 // add to group
                 var customerNameValue = customerName;
-                if(customerCompany) {
+                if(customerCompany && !customerName) {
                   customerNameValue = customerCompany;
                 }
                 var customer = { value: customerNameValue, data: { category: groupName }};
