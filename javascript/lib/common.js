@@ -104,7 +104,14 @@ function OAuthForDevices(tokenResponse) {
         
           for (var j = 0; j < entries.length; j++) {
             var entry = entries[j];
-            var customerName = $(entry).find("title")[0].textContent;
+            var customerDisplayName = $(entry).find("content")[0];
+            if(customerDisplayName) {
+              var findContent = $(entry).find("content")[0].textContent;
+              var contentMatch = findContent.match('Display Name:(.*?)\n');
+              customerDisplayName = contentMatch[1];
+            }
+            // console.debug(customerDisplayName);
+            var customerName = customerDisplayName ? customerDisplayName : $(entry).find("title")[0].textContent;
             var customerCompany = $(entry).find("organization")[0] ? $(entry).find("organization")[0].textContent : null;
             var customerGroup = $(entry).find("groupMembershipInfo")[0];
             var customerGroupId = 0;
