@@ -108,7 +108,7 @@ function OAuthForDevices(tokenResponse) {
             if(customerDisplayName) {
               var findContent = $(entry).find("content")[0].textContent;
               var contentMatch = findContent.match('Display Name:(.*?)\n');
-              customerDisplayName = contentMatch[1];
+              customerDisplayName = contentMatch[1].trim();
             }
             // console.debug(customerDisplayName);
             var customerName = customerDisplayName ? customerDisplayName : $(entry).find("title")[0].textContent;

@@ -5,7 +5,6 @@
   "default_locale":"en",
   "options_page": "views/popup.html",
   "version": "1.0.9",
-  "update_url": "https://connector.appconnect.intuit.com/intuit/api/google-extension-update.xml",
   "background": {
     "page": "background.html"
   },
