@@ -1,10 +1,10 @@
 {
-  "name": "Quickbooks Google Calendar",
-  "description": "Quickbooks with Google Calendar",
+  "name": "QuickBooks Customer Selector",
+  "description": "QuickBooks Customer Selector for Google Calendar",
   "manifest_version": 2,
   "default_locale":"en",
   "options_page": "views/popup.html",
-  "version": "1.0.9",
+  "version": "1.2.0",
   "background": {
     "page": "background.html"
   },
