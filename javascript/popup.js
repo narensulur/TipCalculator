@@ -4,7 +4,12 @@ $(function() {
   chrome.storage.local.get('token', function(item) {
     if(item.token) {
       $('.auth').hide();
+      $('.authsuccess').show();
       $('#get').show();
+      if($('#authRedirect').length > 0) {
+        $('#loader').show();
+        window.location.href = "http://calendar.google.com";
+      }
     }
   });
 
@@ -40,6 +45,11 @@ $(function() {
       case "authtoken.success": 
         $('.auth').hide();
         $('#get').show();
+        $('.authsuccess').show();
+        if($('#authRedirect').length > 0) {
+          $('#loader').show();
+          window.location.href = "http://calendar.google.com";
+        }
       break;
     }
   });

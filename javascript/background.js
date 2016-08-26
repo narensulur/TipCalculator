@@ -78,7 +78,9 @@ background.getCustomers = function() {
 
 background.version = function() {
   if(chrome.app) {
-    window.localStorage['qbo_cal_version'] = chrome.app.getDetails().version;
+    var ver = chrome.app.getDetails().version;
+    window.localStorage['qbo_cal_version'] = ver;
+    console.debug(ver);
   }
 };
 
@@ -101,6 +103,13 @@ background.checkInstall = function() {
     });
   }
 };
+
+browser.onInstall(
+ function(details) {
+   if (details.reason == 'install') {
+     chrome.tabs.create({url: 'views/install.html'});
+   }
+ });
 
 background.init = function() {
   background.checkInstall();
