@@ -1,14 +1,10 @@
 {
-  "name": "QBO Calendar",
-  "description": "Quickbooks with Google Calendar",
+  "name": "QuickBooks Customer Selector",
+  "description": "QuickBooks Customer Selector for Google Calendar",
   "manifest_version": 2,
   "default_locale":"en",
-  "options_page": "views/options.html",
-  "options_ui": {
-    "page": "views/options.html",
-    "chrome_style": true
-  },
-  "version": "1.0.0",
+  "options_page": "views/popup.html",
+  "version": "1.3.0",
   "background": {
     "page": "background.html"
   },
@@ -26,7 +22,8 @@
         "javascript/lib/jquery.min.js", 
         "javascript/lib/jquery.autocomplete.min.js", 
         "javascript/lib/common.js",
-        "javascript/cal.js"
+        "javascript/cal.js",
+        "javascript/event.js"
       ]
     }
   ],
@@ -42,23 +39,15 @@
     "https://*.googleapis.com/*",
     "https://apis.google.com/js/*"
   ],
-  "icons": {
-      "128": "images/icon-128.png",
-      "16": "images/icon-16.png",
-      "48": "images/icon-48.png"
-   },
    "content_security_policy": "script-src 'self' https://www.google.com https://apis.google.com https://calendar.google.com https://ssl.google-analytics.com; object-src 'self'",
   "browser_action": {
     "default_icon": {
-      "19": "images/icon-19.png",
-      "38": "images/icon-38.png"
+      "128": "images/icon-128.png"
     },
-    "default_title": "QBO Calendar",
+    "default_title": "QB Calendar",
     "default_popup": "views/popup.html"
   },
   "icons": {
-    "128": "images/icon-128.png",
-    "48": "images/icon-48.png",
-    "16":"images/icon-16.png"
+    "128": "images/icon-128.png"
   }
 }

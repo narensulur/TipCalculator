@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto">
   <link rel="stylesheet" href="../styles/popup.css" type="text/css">
+  <link rel="stylesheet" href="../styles/spinner.css" type="text/css">
   <script src="../javascript/lib/jquery.min.js"></script>
   <script src="../javascript/lib/common.js"></script>
   <script src="../javascript/popup.js"></script>
@@ -18,11 +19,23 @@
   </div>
 </header>
 <section>
+
+  <p><img src="/images/icon-128.png" /></p>
+
+  <div id="loader" class="hidden">
+    <div class="spinner"> <span class="bgtopl"><span class="highlighttopl"></span></span> <span class="bgtopr"><span class="highlighttopr"></span></span> <span class="bottomrow"> <span class="bgbtml"><span class="highlightbtml"></span></span> <span class="bgbtmr"><span class="highlightbtmr"></span></span> </span> </div>
+    <i class="i18n">Refreshing Contacts...</i>
+  </div>
+
+  <div id="refreshSuccess" class="refresh hidden">
+    <h3>Contacts refreshed successfully</h3>
+  </div>
+
   <p class="auth">
   You need to grant it access to your contacts. This is a one-time setup step required before you can use this app.
   </p>
   <button class="button i18n auth" id="auth">Authorize Quickbooks</button>
-  <button class="button i18n hidden" id="get">Refresh Contacts</button>
+  <button class="button i18n hidden refresh" id="refresh">Refresh Contacts</button>
   <br />
   <br />
   <button class="button i18n" id="clear">Clear Token</button>

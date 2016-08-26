@@ -1,6 +1,10 @@
 var google = {};
 var oAuthForDevices = new OAuthForDevices();
 
+google.refresh = function() {
+  oAuthForDevices.refresh();
+};
+
 google.clearToken = function() {
   oAuthForDevices.clearToken();
 };

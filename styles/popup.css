@@ -104,7 +104,7 @@ section p {
   cursor: pointer;
 }
 
-.button.hidden {
+.hidden {
   display: none;
 }
 
@@ -154,8 +154,8 @@ section p {
 .spinning {
   -webkit-animation-name: spin;
           animation-name: spin;
-  -webkit-animation-duration: 1.5s;
-          animation-duration: 1.5s;
+  -webkit-animation-duration: 0.5s;
+          animation-duration: 0.5s;
   -webkit-animation-iteration-count: infinite;
           animation-iteration-count: infinite;
   -webkit-animation-timing-function: linear;

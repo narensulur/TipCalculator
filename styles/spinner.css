@@ -1,0 +1,882 @@
+.spinner {
+  margin: 0px auto 20px;
+  background-color: #C00;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.spinner {
+  height: 40px; /* Just change W&H */
+  width: 40px;
+}
+
+.highlighttopl {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: block;
+  background-color: #900;
+  height: 50%;
+  border-radius: 100% 0 0 0;
+  width: 50%;
+  animation: highlighttl 2s linear infinite;
+  -webkit-animation: highlighttl 2s linear infinite; /* Chrome, Safari, Opera */
+}
+
+.highlighttopr {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: block;
+  background-color: #900;
+  height: 50%;
+  border-radius: 0 100% 0 0;
+  width: 50%;
+  animation: highlighttr 2s linear infinite;
+  -webkit-animation: highlighttr 2s linear infinite; /* Chrome, Safari, Opera */
+}
+
+.highlightbtml {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: block;
+  background-color: #000;
+  height: 0%;
+  border-radius: 0 0 0 100%;
+  width: 50%;
+  animation: highlightbl 2s linear infinite;
+  -webkit-animation: highlightbl 2s linear infinite; /* Chrome, Safari, Opera */
+}
+
+.highlightbtmr {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  background-color: #000;
+  height: 0%;
+  border-radius: 0 0 100% 0;
+  width: 50%;
+  animation: highlightbr 2s linear infinite;
+  -webkit-animation: highlightbr 2s linear infinite; /* Chrome, Safari, Opera */
+}
+
+.bgtopl {
+  position: relative;
+  display: block;
+  float: left;
+  background-color: #C00;
+  opacity: 1;
+  height: 50%;
+  width: 50%;
+  animation: bgtl 2s linear infinite;
+  -webkit-animation: bgtl 2s linear infinite; /* Chrome, Safari, Opera */
+}
+
+.bgtopr {
+  position: relative;
+  display: block;
+  float: left;
+  background-color: #C00;
+  opacity: 1;
+  height: 50%;
+  width: 50%;
+  animation: bgtr 2s linear infinite;
+  -webkit-animation: bgtr 2s linear infinite; /* Chrome, Safari, Opera */
+}
+
+.bgbtml {
+  display: block;
+  position: relative;
+  background-color: #3c7af4;
+  opacity: 1;
+  float: left;
+  height: 50%;
+  width: 50%;
+  animation: bgbl 2s linear infinite;
+  -webkit-animation: bgbl 2s linear infinite; /* Chrome, Safari, Opera */
+}
+
+.bgbtmr {
+  display: block;
+  position: relative;
+  background-color: #3c7af4;
+  float: left;
+  opacity: 1;
+  height: 50%;
+  width: 50%;
+  animation: bgbr 2s linear infinite;
+  -webkit-animation: bgbr 2s linear infinite; /* Chrome, Safari, Opera */
+}
+
+.bottomrow {
+  padding: 0;
+  width: 100%;
+  margin: 0;
+  height: 100%;
+  clear: both;
+}
+  
+  /* ANIMATIONS - HIGHLIGHTS TOP */
+  
+  /* Chrome, Safari, Opera */
+  @-webkit-keyframes 
+highlighttr {  0% {
+ height:100%;
+ width:100%;
+ background-color:#3c7af4;
+}
+ 14% {
+ height:0%;
+ width:100%;
+ background-color:#00F;
+}
+ 15% {
+ height:0%;
+ width:100%;
+ background-color:#C00;
+}
+ 19% {
+ height:100%;
+ width:100%;
+ background-color:#C00;
+}
+ 25% {
+ height:100%;
+ width:100%;
+ background-color:#C00;
+}
+ 37% {
+ height:100%;
+ width:0%;
+ background-color:#900;
+}
+ 59% {
+ height:100%;
+ width:0%;
+ background-color:#900;
+}
+ 60% {
+ height:100%;
+ width:0%;
+ background-color:#fcd64c;
+}
+ 61% {
+ height:0%;
+ width:100%;
+ background-color:#fcd64c;
+}
+ 62% {
+ height:0%;
+ width:100%;
+ background-color:#1c9254;
+}
+ 75% {
+ height:100%;
+ width:100%;
+ background-color:#24ae64;
+}
+ 86% {
+ height:100%;
+ width:0%;
+ background-color:#24ae64;
+}
+ 87% {
+ height:100%;
+ width:0%;
+ background-color:#00F;
+}
+ 100% {
+ height:100%;
+ width:100%;
+ background-color:#3c7af4;
+}
+}
+  
+  /* Standard syntax */
+  @keyframes 
+highlighttr {  0% {
+ height:100%;
+ width:100%;
+ background-color:#3c7af4;
+}
+ 14% {
+ height:0%;
+ width:100%;
+ background-color:#00F;
+}
+ 15% {
+ height:0%;
+ width:100%;
+ background-color:#C00;
+}
+ 19% {
+ height:100%;
+ width:100%;
+ background-color:#C00;
+}
+ 25% {
+ height:100%;
+ width:100%;
+ background-color:#C00;
+}
+ 37% {
+ height:100%;
+ width:0%;
+ background-color:#900;
+}
+ 59% {
+ height:100%;
+ width:0%;
+ background-color:#900;
+}
+ 60% {
+ height:100%;
+ width:0%;
+ background-color:#fcd64c;
+}
+ 61% {
+ height:0%;
+ width:100%;
+ background-color:#fcd64c;
+}
+ 62% {
+ height:0%;
+ width:100%;
+ background-color:#1c9254;
+}
+ 75% {
+ height:100%;
+ width:100%;
+ background-color:#24ae64;
+}
+ 86% {
+ height:100%;
+ width:0%;
+ background-color:#24ae64;
+}
+ 87% {
+ height:100%;
+ width:0%;
+ background-color:#00F;
+}
+ 100% {
+ height:100%;
+ width:100%;
+ background-color:#3c7af4;
+}
+}
+  
+  
+  
+  /* Chrome, Safari, Opera */
+  @-webkit-keyframes 
+highlighttl {  0% {
+ height:100%;
+ width:100%;
+ background-color:#3c7af4;
+}
+ 14% {
+ height:0%;
+ width:100%;
+ background-color:#00F;
+}
+ 16% {
+ height:0%;
+ width:100%;
+ background-color:#C00;
+}
+ 36% {
+ height:100%;
+ width:0%;
+ background-color:#C00;
+}
+ 37% {
+ height:100%;
+ width:0%;
+ background-color:#fcde6c;
+}
+ 50% {
+ height:100%;
+ width:100%;
+ background-color:#fcd64c;
+}
+ 61% {
+ height:0%;
+ width:100%;
+ background-color:#fcd64c;
+}
+ 62% {
+ height:0%;
+ width:100%;
+ background-color:#1c9254;
+}
+ 75% {
+ height:100%;
+ width:100%;
+ background-color:#24ae64;
+}
+ 87% {
+ height:100%;
+ width:0%;
+ background-color:#1c9654;
+}
+ 100% {
+ height:100%;
+ width:0%;
+ background-color:#1c9654;
+}
+}
+  
+  /* Standard syntax */
+  @keyframes 
+highlighttl {  0% {
+ height:100%;
+ width:100%;
+ background-color:#3c7af4;
+}
+ 14% {
+ height:0%;
+ width:100%;
+ background-color:#00F;
+}
+ 16% {
+ height:0%;
+ width:100%;
+ background-color:#C00;
+}
+ 36% {
+ height:100%;
+ width:0%;
+ background-color:#C00;
+}
+ 37% {
+ height:100%;
+ width:0%;
+ background-color:#fcde6c;
+}
+ 50% {
+ height:100%;
+ width:100%;
+ background-color:#fcd64c;
+}
+ 61% {
+ height:0%;
+ width:100%;
+ background-color:#fcd64c;
+}
+ 62% {
+ height:0%;
+ width:100%;
+ background-color:#1c9254;
+}
+ 75% {
+ height:100%;
+ width:100%;
+ background-color:#24ae64;
+}
+ 87% {
+ height:100%;
+ width:0%;
+ background-color:#1c9654;
+}
+ 100% {
+ height:100%;
+ width:0%;
+ background-color:#1c9654;
+}
+}
+
+
+  /* ANIMATIONS - HIGHLIGHTS BOTTOM */
+  
+  /* Chrome, Safari, Opera */
+  @-webkit-keyframes 
+highlightbr {  13% {
+ height:0%;
+ width:100%;
+ background-color:#900;
+}
+ 24% {
+ height:100%;
+ width:100%;
+ background-color:#C00;
+}
+ 25% {
+ height:100%;
+ width:100%;
+ background-color:#C00;
+}
+ 37% {
+ height:100%;
+ width:0%;
+ background-color:#900;
+}
+ 49% {
+ height:100%;
+ width:0%;
+ background-color:#900;
+}
+ 50% {
+ height:100%;
+ width:0%;
+ background-color:#fcd64c;
+}
+ 51% {
+ height:100%;
+ width:100%;
+ background-color:#fcd64c;
+}
+ 62% {
+ height:0%;
+ width:100%;
+ background-color:#fcde6c;
+}
+ 63% {
+ height:0%;
+ width:100%;
+ background-color:#24ae64;
+}
+ 86% {
+ height:100%;
+ width:0%;
+ background-color:#24ae64;
+}
+ 87% {
+ height:100%;
+ width:0%;
+ background-color:#00F;
+}
+ 100% {
+ height:100%;
+ width:100%;
+ background-color:#3c7af4;
+}
+}
+  
+  /* Standard syntax */
+  @keyframes 
+highlightbr {  13% {
+ height:0%;
+ width:100%;
+ background-color:#900;
+}
+ 24% {
+ height:100%;
+ width:100%;
+ background-color:#C00;
+}
+ 25% {
+ height:100%;
+ width:100%;
+ background-color:#C00;
+}
+ 37% {
+ height:100%;
+ width:0%;
+ background-color:#900;
+}
+ 49% {
+ height:100%;
+ width:0%;
+ background-color:#900;
+}
+ 50% {
+ height:100%;
+ width:0%;
+ background-color:#fcd64c;
+}
+ 51% {
+ height:100%;
+ width:100%;
+ background-color:#fcd64c;
+}
+ 62% {
+ height:0%;
+ width:100%;
+ background-color:#fcde6c;
+}
+ 63% {
+ height:0%;
+ width:100%;
+ background-color:#24ae64;
+}
+ 86% {
+ height:100%;
+ width:0%;
+ background-color:#24ae64;
+}
+ 87% {
+ height:100%;
+ width:0%;
+ background-color:#00F;
+}
+ 100% {
+ height:100%;
+ width:100%;
+ background-color:#3c7af4;
+}
+}
+  
+  
+  
+  /* Chrome, Safari, Opera */
+  @-webkit-keyframes 
+highlightbl {  13% {
+ height:0%;
+ width:100%;
+ background-color:#900;
+}
+ 24% {
+ height:100%;
+ width:100%;
+ background-color:#C00;
+}
+ 25% {
+ height:100%;
+ width:100%;
+ background-color:#C00;
+}
+ 36% {
+ height:100%;
+ width:0%;
+ background-color:#C00;
+}
+ 37% {
+ height:100%;
+ width:0%;
+ background-color:#fcde6c;
+}
+ 50% {
+ height:100%;
+ width:100%;
+ background-color:#fcd64c;
+}
+ 51% {
+ height:100%;
+ width:100%;
+ background-color:#fcd64c;
+}
+ 62% {
+ height:0%;
+ width:100%;
+ background-color:#fcde6c;
+}
+ 63% {
+ height:0%;
+ width:100%;
+ background-color:#24ae64;
+}
+ 75% {
+ height:100%;
+ width:100%;
+ background-color:#24ae64;
+}
+ 87% {
+ height:100%;
+ width:0%;
+ background-color:#1c9654;
+}
+ 100% {
+ height:100%;
+ width:0%;
+ background-color:#1c9654;
+}
+}
+  
+  /* Standard syntax */
+  @keyframes 
+highlightbl {  13% {
+ height:0%;
+ width:100%;
+ background-color:#900;
+}
+ 24% {
+ height:100%;
+ width:100%;
+ background-color:#C00;
+}
+ 25% {
+ height:100%;
+ width:100%;
+ background-color:#C00;
+}
+ 36% {
+ height:100%;
+ width:0%;
+ background-color:#C00;
+}
+ 37% {
+ height:100%;
+ width:0%;
+ background-color:#fcde6c;
+}
+ 50% {
+ height:100%;
+ width:100%;
+ background-color:#fcd64c;
+}
+ 51% {
+ height:100%;
+ width:100%;
+ background-color:#fcd64c;
+}
+ 62% {
+ height:0%;
+ width:100%;
+ background-color:#fcde6c;
+}
+ 63% {
+ height:0%;
+ width:100%;
+ background-color:#24ae64;
+}
+ 75% {
+ height:100%;
+ width:100%;
+ background-color:#24ae64;
+}
+ 87% {
+ height:100%;
+ width:0%;
+ background-color:#1c9654;
+}
+ 100% {
+ height:100%;
+ width:0%;
+ background-color:#1c9654;
+}
+}
+  
+  
+  /* ANIMATIONS - BGS TOP */
+  
+  /* Chrome, Safari, Opera */
+  @-webkit-keyframes 
+bgtl {  0% {
+ background-color:#C00;
+}
+ 25% {
+ background-color:#C00;
+}
+ 50% {
+ background-color:#C00;
+}
+ 51% {
+ background-color:#fcd64c;
+}
+ 74% {
+ background-color:#fcd64c;
+}
+ 75% {
+ background-color:#1c9654;
+}
+ 76% {
+ background-color:#3c7af4;
+}
+ 100% {
+ background-color:#3c7af4;
+}
+}
+  
+  /* Standard syntax */
+  @keyframes 
+bgtl {  0% {
+ background-color:#C00;
+}
+ 25% {
+ background-color:#C00;
+}
+ 50% {
+ background-color:#C00;
+}
+ 51% {
+ background-color:#fcd64c;
+}
+ 74% {
+ background-color:#fcd64c;
+}
+ 75% {
+ background-color:#1c9654;
+}
+ 76% {
+ background-color:#3c7af4;
+}
+ 100% {
+ background-color:#3c7af4;
+}
+}
+  
+  
+  
+  /* Chrome, Safari, Opera */
+  @-webkit-keyframes 
+bgtr {  0% {
+ background-color:#C00;
+}
+ 25% {
+ background-color:#C00;
+}
+ 26% {
+ background-color:#fcd64c;
+}
+ 51% {
+ background-color:#fcd64c;
+}
+ 75% {
+ background-color:#fcd64c;
+}
+ 76% {
+ background-color:#24ae64;
+}
+ 100% {
+ background-color:#24ae64;
+}
+}
+  
+  /* Standard syntax */
+  @keyframes 
+bgtr {  0% {
+ background-color:#C00;
+}
+ 25% {
+ background-color:#C00;
+}
+ 26% {
+ background-color:#fcd64c;
+}
+ 51% {
+ background-color:#fcd64c;
+}
+ 75% {
+ background-color:#fcd64c;
+}
+ 76% {
+ background-color:#24ae64;
+}
+ 100% {
+ background-color:#24ae64;
+}
+}
+  
+  
+  /* ANIMATIONS - BGS BOTTOM */
+  
+  /* Chrome, Safari, Opera */
+  @-webkit-keyframes 
+bgbl {  0% {
+ background-color:#3c7af4;
+}
+ 25% {
+ background-color:#3c7af4;
+}
+ 26% {
+ background-color:#C00;
+}
+ 50% {
+ background-color:#C00;
+}
+ 51% {
+ background-color:#fcd64c;
+}
+ 52% {
+ background-color:#24ae64;
+}
+ 74% {
+ background-color:#24ae64;
+}
+ 75% {
+ background-color:#3c7af4;
+}
+ 100% {
+}
+}
+  
+  /* Standard syntax */
+  @keyframes 
+bgbl {  0% {
+ background-color:#3c7af4;
+}
+ 25% {
+ background-color:#3c7af4;
+}
+ 26% {
+ background-color:#C00;
+}
+ 50% {
+ background-color:#C00;
+}
+ 51% {
+ background-color:#fcd64c;
+}
+ 52% {
+ background-color:#24ae64;
+}
+ 74% {
+ background-color:#24ae64;
+}
+ 75% {
+ background-color:#3c7af4;
+}
+ 100% {
+}
+}
+  
+  
+  
+  /* Chrome, Safari, Opera */
+  @-webkit-keyframes 
+bgbr {  0% {
+ background-color:#3c7af4;
+}
+ 25% {
+ background-color:#3c7af4;
+}
+ 26% {
+ background-color:#fcd64c;
+}
+ 50% {
+ background-color:#fcd64c;
+}
+ 51% {
+ background-color:#fcd64c;
+}
+ 52% {
+ background-color:#24ae64;
+}
+ 75% {
+ background-color:#24ae64;
+}
+ 100% {
+ background-color:#24ae64;
+}
+}
+  
+  /* Standard syntax */
+  @keyframes 
+bgbr {  0% {
+ background-color:#3c7af4;
+}
+ 25% {
+ background-color:#3c7af4;
+}
+ 26% {
+ background-color:#fcd64c;
+}
+ 50% {
+ background-color:#fcd64c;
+}
+ 51% {
+ background-color:#fcd64c;
+}
+ 52% {
+ background-color:#24ae64;
+}
+ 75% {
+ background-color:#24ae64;
+}
+ 100% {
+ background-color:#24ae64;
+}
+}
