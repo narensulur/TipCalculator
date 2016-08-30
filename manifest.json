@@ -24,6 +24,7 @@
         "javascript/lib/jquery.min.js", 
         "javascript/lib/jquery.autocomplete.min.js", 
         "javascript/lib/common.js",
+        "javascript/lib/time.js",
         "javascript/cal.js",
         "javascript/event.js"
       ]

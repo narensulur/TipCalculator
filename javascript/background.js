@@ -70,6 +70,8 @@ background.listen = function() {
 background.getCustomers = function() {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     var activeTab = tabs[0];
+    console.debug('getCustomers()');
+    console.debug(tabs.length);
     chrome.storage.local.get('contacts', function(item) {
       chrome.tabs.sendMessage(activeTab.id, {"message": item.contacts });
     });

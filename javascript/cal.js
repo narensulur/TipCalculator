@@ -1,6 +1,25 @@
 
+var GoogleCalendarOAuth = new OAuthForDevices();
+
 var GoogleCalendarData = {
   data: [],
+  refreshComplete: true,
+  refresh: function() {
+    if(this.refreshComplete) {
+      this.refreshComplete = false;
+      this.fetchCustomers();
+    }
+  },
+  fetchCustomers: function() {
+    var _this = this;
+    GoogleCalendarOAuth.callback = function() { 
+      _this.refreshComplete = true; 
+      chrome.storage.local.get('contacts', function(item) { 
+        _this.get(item.contacts); 
+      });
+    }
+    GoogleCalendarOAuth.loadToken(true); // true = silent
+  },
   get: function(message) {
     this.data = [];
     var customer = JSON.parse(message);
@@ -133,6 +152,12 @@ var GoogleCalendarQuickEvent = {
     this.backgroundInput.val($('#' + this.foregroundId).val()).show().focus();
   },
 
+  updateAutoComplete: function() {
+    if(!this.foregroundInput) { return; }
+    console.debug('updateAutoComplete()');
+    this.foregroundInput.autocomplete.lookup = this.data;
+  },
+
   autoCompleteQuick: function() {
 
     if(!this.checkInputs()) {
@@ -189,9 +214,15 @@ var GoogleCalendarQuickEvent = {
           groupBy: 'category'
       });
   },
+  refresh: function() {
+    GoogleCalendarData.refresh();
+    console.debug('REFRESHING...');
+  }, 
   init: function() {
-    // console.debug('Google Calendar Loaded');
+    console.debug('Google Calendar Loaded');
     this.quickEvent();
+    this.refresh();
+    setInterval(this.refresh, 60000); // one minute
   }
 };
 
