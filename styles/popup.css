@@ -104,10 +104,6 @@ section p {
   cursor: pointer;
 }
 
-.hidden {
-  display: none;
-}
-
 .button {
   background: #0086f4;
   border: 0;
@@ -160,4 +156,8 @@ section p {
           animation-iteration-count: infinite;
   -webkit-animation-timing-function: linear;
           animation-timing-function: linear;
+}
+
+.hidden {
+  display: none;
 }

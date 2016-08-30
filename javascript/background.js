@@ -70,6 +70,8 @@ background.listen = function() {
 background.getCustomers = function() {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     var activeTab = tabs[0];
+    console.debug('getCustomers()');
+    console.debug(tabs.length);
     chrome.storage.local.get('contacts', function(item) {
       chrome.tabs.sendMessage(activeTab.id, {"message": item.contacts });
     });
@@ -78,7 +80,9 @@ background.getCustomers = function() {
 
 background.version = function() {
   if(chrome.app) {
-    window.localStorage['qbo_cal_version'] = chrome.app.getDetails().version;
+    var ver = chrome.app.getDetails().version;
+    window.localStorage['qbo_cal_version'] = ver;
+    console.debug(ver);
   }
 };
 
@@ -101,6 +105,13 @@ background.checkInstall = function() {
     });
   }
 };
+
+browser.onInstall(
+ function(details) {
+   if (details.reason == 'install') {
+     chrome.tabs.create({url: 'views/install.html'});
+   }
+ });
 
 background.init = function() {
   background.checkInstall();

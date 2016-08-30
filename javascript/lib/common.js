@@ -84,6 +84,7 @@ function OAuthForDevices(tokenResponse) {
   };
 
   this.getContactsAPI = function(callback) {
+    console.debug('Get Contacts API');
     sendOAuthRequest({tokenResponse: that.tokenResponse, url: "contacts/default/full/"}, function(params) {     
       if (params.error) {
         console.error("failed, need token refresh");
@@ -148,16 +149,18 @@ function OAuthForDevices(tokenResponse) {
 
         chrome.storage.local.set({'contacts': JSON.stringify(customers)});
 
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-          var activeTab = tabs[0];
-          chrome.storage.local.get('contacts', function(item) {
-            chrome.tabs.sendMessage(activeTab.id, {"message": item.contacts });
+        if(chrome.tabs) {
+          chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            var activeTab = tabs[0];
+            chrome.storage.local.get('contacts', function(item) {
+              chrome.tabs.sendMessage(activeTab.id, {"message": item.contacts });
+            });
           });
-        });
+        }
 
-        if(typeof(this.callback) === "function") {
-          this.callback();
-          this.callback = null;
+        if(typeof(that.callback) === "function") {
+          that.callback();
+          that.callback = null;
         }
 
       }
@@ -348,9 +351,13 @@ function OAuthForDevices(tokenResponse) {
     });
   }
 
-  this.refresh = function() {
-    this.callback = function() {
-      chrome[runtimeOrExtension].sendMessage({method: 'authtoken.refresh'});
+  this.refresh = function(callback) {
+    if(callback) {
+      this.callback = callback;
+    } else {
+      this.callback = function() {
+        chrome[runtimeOrExtension].sendMessage({method: 'authtoken.refresh'});
+      }
     }
     this.loadToken();
   }
@@ -369,7 +376,7 @@ function OAuthForDevices(tokenResponse) {
     chrome.storage.local.set({'token': JSON.stringify(that.tokenResponse)});
   };
 
-  this.loadToken = function() {
+  this.loadToken = function(silent) {
     chrome.storage.local.get('token', function(item) {
       // console.debug('got token');
       // console.debug(item.token);
@@ -377,7 +384,9 @@ function OAuthForDevices(tokenResponse) {
         that.tokenResponse = JSON.parse(item.token);
         that.getContacts();
       } else {
-        that.openPermissionWindow();
+        if(!silent) {
+          that.openPermissionWindow();
+        }
       }
 
     });
