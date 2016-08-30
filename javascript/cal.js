@@ -182,7 +182,7 @@ var GoogleCalendarQuickEvent = {
               var phrase = phraseRegEx.exec(queryLowerCase);
               if(phrase) {
                 stringToReplace = phrase[0].replace('+', '');
-                var re = new RegExp('\\b' + $.Autocomplete.utils.escapeRegExChars(stringToReplace), 'gi');
+                var re = new RegExp('\\b' + $.Autocomplete.utils.escapeRegExChars(stringToReplace.trimLeft()), 'gi');
                 var showAutoComplete = re.test(suggestion.value);
                 if(showAutoComplete === true) {
                   _this.showingSuggestions = true;
@@ -196,7 +196,7 @@ var GoogleCalendarQuickEvent = {
           },
           onSelect: function (suggestion) {
 
-              var replaceWith = "+" + suggestion.value;
+              var replaceWith = "+" + suggestion.value.trimLeft();
 
               var stringToReplaceRegex = new RegExp($.Autocomplete.utils.escapeRegExChars("+" + stringToReplace), 'i');
 
